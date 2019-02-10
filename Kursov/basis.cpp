@@ -81,7 +81,12 @@ float permutation::criterion(input_data& param) {
 	for (int j = 0; j < param.get_count_machines(); ++j) {
 		temp[0] += matrix_time[j][(*this)[0]];
 		for (unsigned int i = 1; i < size(); ++i) {
-			temp[i] += temp[i - 1] + matrix_time[j][(*this)[i]];
+			if (temp[i] < temp[i - 1]) {
+				temp[i] += temp[i - 1] + matrix_time[j][(*this)[i]];
+			}
+			else {
+				temp[i] += temp[i] + matrix_time[j][(*this)[i]];
+			}
 		}
 	}
 	return temp[temp.size() - 1];
