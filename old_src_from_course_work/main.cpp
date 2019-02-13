@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
 	srand(unsigned int(time(0)));
-	input_data param = input_data::read_input_data("D:\\test.txt");
+	input_data param = input_data::read_input_data("D:\\pipeline_transp.txt");
 	clock_t currentTime = clock();
 	cout << "----------Frontal algorithm----------------" << endl << endl;
 	front_alg front_algorithm(param);
