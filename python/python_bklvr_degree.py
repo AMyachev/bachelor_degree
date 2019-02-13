@@ -38,16 +38,16 @@ class Jobs:
         for i in range(count_job):
             self.job_current_state.append(-1)
 
-    def all_time_job(self, job):          #heuristics
+    def all_time_job(self, job):          # heuristics
         sum = 0
-        for i in range(int(count_machine)):
+        for i in range(int(self.count_machine)):
             sum += processing_time[job][i]
         return sum
 
-    def Palmer_heuristics(self, job):
+    def palmer_heuristics(self, job):
         slope_index = 0
-        for i in range(int(count_machine)):
-            slope_index -= (int(count_machine) - (2 * (i + 1) - 1)) * processing_time[job][i]
+        for i in range(int(self.count_machine)):
+            slope_index -= (int(self.count_machine) - (2 * (i + 1) - 1)) * processing_time[job][i]
         return slope_index
 
     def list_ready(self, current_time):
@@ -55,8 +55,8 @@ class Jobs:
         for i in range(self.count_jobs):
             if self.job_release_time[i] <= current_time:
                 output.append(i)
-        #output.sort(key=self.all_time_job)
-        output.sort(key=self.Palmer_heuristics, reverse=True)
+        # output.sort(key=self.all_time_job)
+        output.sort(key=self.palmer_heuristics, reverse=True)
         return output
 
     def nextmachine(self, job, processing_order):
@@ -78,6 +78,7 @@ class Jobs:
                return False
         return True
 
+
 class Machines:
     def __init__(self, count_machine):
         self.count_machine = count_machine
@@ -95,6 +96,7 @@ class Machines:
                 output.append(i)
         return output
 
+
 def frontal_algorithm(jobs, machines):
     current_time = 0
 
@@ -110,6 +112,7 @@ def frontal_algorithm(jobs, machines):
 
     return current_time
 
+
 def min_with_bound(job_times, job_in_permutation):
     min = -1
     for index, time in enumerate(job_times):
@@ -120,17 +123,18 @@ def min_with_bound(job_times, job_in_permutation):
                 min = time
     return min
 
+
 def index_with_check(job_times, min_value, job_in_permutation):
     for index, time in enumerate(job_times):
         if time == min_value and job_in_permutation[index] == 0:
             return index
     return -1
 
-def Johnson_algorithm(jobs, machines):
+
+def johnson_algorithm(jobs, machines, processing_time):
     output = []
     index_insert = 0
-    processing_time = [[17, 15, 14, 20, 16], [13, 12, 16, 20, 17]] # TODO remove hardcode time matrix
-    job_in_permutation = [0, 0, 0, 0, 0]
+    job_in_permutation = [0 for _ in range(int(count_job))]
     if len(processing_time) != 2:
         raise ValueError
 
@@ -140,7 +144,7 @@ def Johnson_algorithm(jobs, machines):
     for i in range(int(count_job)):
         if min_item_first_machine == -1 or min_item_second_machine == -1:
             raise ValueError
-        if (min_item_first_machine > min_item_second_machine):
+        if min_item_first_machine > min_item_second_machine:
             index_job = index_with_check(processing_time[1], min_item_second_machine, job_in_permutation)
             if index_job == -1:
                 raise ValueError
@@ -163,18 +167,62 @@ def Johnson_algorithm(jobs, machines):
 
     return output
 
-#count_job, count_machine, processing_time, processing_order = read_file('D:\\pipeline_task.txt',True) #for open shop use False
 
-#processing_time = list(zip(*processing_time)) # and comment this
+def compute_permutation_end_time(permutation, processing_time):
+    machines_time = [0 for _ in range(len(processing_time[0]))]
+    for job in permutation:
+        machines_time[0] += processing_time[job][0]
+        for machine_index in range(1, len(processing_time[0])):
+            job_time = processing_time[job][machine_index]
+            machine_release_time = machines_time[machine_index]
+            prev_machine_release_time = machines_time[machine_index - 1]
+
+            if machine_release_time >= prev_machine_release_time:
+                machines_time[machine_index] = machine_release_time + job_time
+            else:
+                machines_time[machine_index] = prev_machine_release_time + job_time
+    return machines_time[len(machines_time) - 1]
+
+
+assert 114 == compute_permutation_end_time([2, 4, 3, 0, 1], [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])  # test
+assert 115 == compute_permutation_end_time([4, 2, 3, 0, 1], [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])  # test
+
+def campbell_dudek_smith(jobs, machines, processing_time):
+    def a(jobs, sub_problem):                 # first stage for CDS heuristics
+        times_for_first_stage = []
+        for i in range(jobs.count_jobs):
+            sum = 0
+            for j in range(sub_problem):
+                sum += processing_time[i][j]
+            times_for_first_stage.append(sum)
+        return times_for_first_stage
+
+    def b(jobs, sub_problem):                 # second stage for CDS heuristics
+        times_for_second_stage = []
+        for i in range(jobs.count_jobs):
+            sum = 0
+            for j in range(jobs.count_jobs - sub_problem, jobs.count_jobs):
+                sum += processing_time[i][j]
+            times_for_second_stage.append(sum)
+        return times_for_second_stage
+
+    jobs_sequences = []
+    for sub_problem in range(1, jobs.count_jobs):
+        jobs_sequences.append(johnson_algorithm(jobs, machines, [a(jobs, sub_problem), b(jobs, sub_problem)]))
+
+    jobs_sequences.sort(key=lambda jobs_sequence: compute_permutation_end_time(jobs_sequence, processing_time))
+
+
+# count_job, count_machine, processing_time, processing_order = read_file('D:\\pipeline_task.txt',True) # for open shop use False
+
+# processing_time = list(zip(*processing_time)) # and comment this
+
 
 count_job, count_machine, processing_time, processing_order = read_file('D:\\pipeline_task.txt', False)
-
-
-
 
 jobs = Jobs(int(count_job))
 machines = Machines(int(count_machine))
 
-print(Johnson_algorithm(jobs, machines))
+print(campbell_dudek_smith(jobs, machines, processing_time))
 
-#print(frontal_algorithm(jobs, machines))
+# print(frontal_algorithm(jobs, machines))
