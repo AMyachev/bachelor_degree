@@ -123,8 +123,26 @@ class Machines:
         return output
 
 
+class Schedule(object):
+    def __init__(self, jobs_duration_times, end_time):
+        self.jobs_duration_times = jobs_duration_times
+        self._end_time = end_time
+
+    @property
+    def jobs(self):
+        return self.jobs_duration_times.keys()
+
+    @property
+    def end_time(self):
+        return self._end_time
+
+    def process_times(self, job):
+        return self.jobs_duration_times[job]
+
+
 def frontal_algorithm(_job_scheduling_task):
     current_time = 0
+    _schedule = {job: [] for job in range(_job_scheduling_task.count_jobs)}
 
     while not _job_scheduling_task.schedule_ready:
         ready_jobs = _job_scheduling_task.ready_jobs(current_time)
@@ -133,10 +151,12 @@ def frontal_algorithm(_job_scheduling_task):
             next_car = _job_scheduling_task.next_ready_machine(job)
             if next_car in ready_machines:
                 _job_scheduling_task.work_on_machine(job, next_car, current_time)
+                _schedule[job].append((next_car, current_time,
+                                      current_time + _job_scheduling_task.processing_time[job][next_car]))
             ready_machines = _job_scheduling_task.ready_machines(current_time)
         current_time += 1
 
-    return current_time
+    return Schedule(_schedule, current_time - 1)
 
 
 def min_with_check(job_times, job_in_permutation):
@@ -197,7 +217,7 @@ def johnson_algorithm(_johnson_scheduling_frame):
     return output
 
 
-def compute_permutation_end_time(permutation, processing_time):
+def create_schedule(permutation, processing_time):
     _schedule = {job: [] for job in permutation}
     machines_time = [0 for _ in range(len(processing_time[0]))]
 
@@ -220,15 +240,16 @@ def compute_permutation_end_time(permutation, processing_time):
                 temp_end_time = temp_begin_time + job_time
                 machines_time[machine_index] = temp_end_time
             _schedule[job].append([machine_index, temp_begin_time, temp_end_time])
-    return _schedule, machines_time[len(machines_time) - 1]
+
+    return Schedule(_schedule, machines_time[len(machines_time) - 1])
 
 
-test_1 = compute_permutation_end_time([2, 4, 3, 0, 1],
-                                      [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])  # test
-assert test_1[1] == 114
-test_2 = compute_permutation_end_time([4, 2, 3, 0, 1],
-                                      [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])  # test
-assert test_2[1] == 115
+test_1 = create_schedule([2, 4, 3, 0, 1],
+                         [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])
+assert test_1.end_time == 114
+test_2 = create_schedule([4, 2, 3, 0, 1],
+                         [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])
+assert test_2.end_time == 115
 
 
 def campbell_dudek_smith(job_scheduling_frame):
@@ -259,8 +280,8 @@ def campbell_dudek_smith(job_scheduling_frame):
                                                     b(job_scheduling_frame, sub_problem)]
         jobs_sequences.append(johnson_algorithm(johnson_scheduling_frame))
 
-    jobs_sequences.sort(key=lambda jobs_sequence: compute_permutation_end_time(jobs_sequence,
-                                                                               job_scheduling_frame.processing_time)[1])
+    jobs_sequences.sort(key=lambda jobs_sequence:
+                        create_schedule(jobs_sequence, job_scheduling_frame.processing_time).end_time)
     return jobs_sequences[0]
 
 
@@ -298,31 +319,31 @@ def heuristics_all_time_job(flow_job_scheduling_frame):          # heuristics wi
     return result_sequence
 
 
-def create_gantt_chart(_schedule):
+def create_gantt_chart(_schedule, filename='gantt_chart.html'):
     def sec_to_time(secs):
         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(secs))
 
     df = []
-    for job in _schedule:
-        for list_duration in _schedule[job]:
-            start_date = sec_to_time(list_duration[1])
-            end_date = sec_to_time(list_duration[2])
-            machine_number = list_duration[0] + 1
+    for job in _schedule.jobs:
+        for duration in _schedule.process_times(job):
+            start_date = sec_to_time(duration[1])
+            end_date = sec_to_time(duration[2])
+            machine_number = duration[0] + 1
             temp_dict = dict(Task="Machine #%d" % machine_number, Start=start_date, Finish=end_date)
             df.append(temp_dict)
 
     fig = ff.create_gantt(df, group_tasks=True)
 
     sch = 0
-    for job in _schedule:
-        for operation, list_duration in enumerate(_schedule[job]):
-            start_date = sec_to_time(list_duration[1])
-            end_date = sec_to_time(list_duration[2])
+    for job in _schedule.jobs:
+        for operation, duration in enumerate(_schedule.process_times(job)):
+            start_date = sec_to_time(duration[1])
+            end_date = sec_to_time(duration[2])
             text = "Start: %s, Finish: %s, Job #%d, Operation #%d" % (start_date, end_date, job + 1, operation + 1)
             fig["data"][sch].update(text=text, hoverinfo="text")
             sch += 1
 
-    plotly.offline.plot(fig, filename='check_gantt.html', auto_open=True)
+    plotly.offline.plot(fig, filename=filename, auto_open=True)
 
 # for open shop use False
 # count_job, count_machine, processing_time, processing_order = read_file('D:\\pipeline_task.txt',True)
@@ -331,20 +352,20 @@ def create_gantt_chart(_schedule):
 
 job_scheduling_task = read_file('D:\\pipeline_task.txt', False)
 
-palmer_sequence = palmer_heuristics(job_scheduling_task)
-print("palmer's sequence :", palmer_sequence)
-schedule, end_time = compute_permutation_end_time(palmer_sequence, job_scheduling_task.processing_time)
-# create_gantt_chart(schedule)
+# palmer_sequence = palmer_heuristics(job_scheduling_task)
+# print("palmer's sequence :", palmer_sequence)
 
-cds_sequence = campbell_dudek_smith(job_scheduling_task)
-print("CDS's sequence :", cds_sequence)
-schedule_1, end_time_1 = compute_permutation_end_time(cds_sequence, job_scheduling_task.processing_time)
+# cds_sequence = campbell_dudek_smith(job_scheduling_task)
+# print("CDS's sequence :", cds_sequence)
+# schedule_1 = create_schedule(cds_sequence, job_scheduling_task.processing_time)
+# create_gantt_chart(schedule_1)
 
-all_time_heuristic_sequence = heuristics_all_time_job(job_scheduling_task)
-print("all time_heuristic :", all_time_heuristic_sequence)
-schedule_2, end_time_2 = compute_permutation_end_time(all_time_heuristic_sequence, job_scheduling_task.processing_time)
-print(end_time_2)
-create_gantt_chart(schedule_2)
+# all_time_heuristic_sequence = heuristics_all_time_job(job_scheduling_task)
+# print("all time_heuristic :", all_time_heuristic_sequence)
 
-# frontal_sequence = frontal_algorithm(job_scheduling_task)
-# print("frontal's sequence", frontal_sequence)
+
+schedule_frontal = frontal_algorithm(job_scheduling_task)
+create_gantt_chart(schedule_frontal)
+print("frontal end_time", schedule_frontal.end_time)
+
+# TODO implement lower bound of flow shop problem
