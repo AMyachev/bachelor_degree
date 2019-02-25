@@ -57,3 +57,37 @@ def campbell_dudek_smith(job_scheduling_frame):
     jobs_sequences.sort(key=lambda jobs_sequence:
                         create_schedule(jobs_sequence, job_scheduling_frame.processing_time).end_time)
     return jobs_sequences[0]
+
+
+def neh_heuristics(flow_job_scheduling_frame):
+    count_jobs = flow_job_scheduling_frame.count_jobs
+    count_machines = flow_job_scheduling_frame.count_machines
+    processing_time = flow_job_scheduling_frame.processing_time
+
+    init_job_sequence = [index_job for index_job in range(count_jobs)]
+    sum_sequence = []
+    for job in range(count_jobs):
+        sum_time = 0
+        for i in range(count_machines):
+            sum_time += processing_time[job][i]
+        sum_sequence.append(sum_time)
+
+    init_job_sequence.sort(key=lambda x: sum_sequence[x])
+    result_sequence = [init_job_sequence[0]]
+    for i in range(1, count_jobs):
+        _min = -1
+        best_sequence = []
+        for j in range(0, i + 1):
+            temp_sequence = list(result_sequence)
+            temp_sequence.insert(j, init_job_sequence[i])
+            if _min == -1:
+                _min = create_schedule(temp_sequence, processing_time).end_time
+                best_sequence = temp_sequence
+            else:
+                end_time = create_schedule(temp_sequence, processing_time).end_time
+                if _min > end_time:
+                    _min = end_time
+                    best_sequence = temp_sequence
+        result_sequence = list(best_sequence)
+
+    return result_sequence

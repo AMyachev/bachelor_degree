@@ -11,7 +11,7 @@ from core import Jobs, Machines, JobSchedulingFrame
 # TODO reimplemented for various input file formats
 
 
-def read_file(file_name, transpose):
+def read_file_with_open_shop(file_name):
     f = open(file_name)
     count_jobs, count_machines = 0, 0
     processing_time, processing_order = [], []
@@ -21,14 +21,10 @@ def read_file(file_name, transpose):
             string = next(f)
             count_jobs, count_machines = [int(count) for count in re.findall(r'\d+', string)[:2]]
         if string.startswith('processing'):
-            if transpose:
-                count_machines, count_jobs = count_jobs, count_machines
             for _ in range(count_jobs):
                 string = next(f)
                 processing_time.append([int(number) for number in re.findall(r'\d+', string)])
         if string.startswith('machines'):
-            if transpose:
-                count_machines, count_jobs = count_jobs, count_machines
             for _ in range(count_jobs):
                 string = next(f)
                 processing_order.append([int(number) for number in re.findall(r'\d+', string)])
@@ -39,6 +35,27 @@ def read_file(file_name, transpose):
     machines_cl = Machines(count_machines)
 
     return JobSchedulingFrame(jobs_cl, machines_cl, processing_time, processing_order)
+
+
+def read_file_with_flow_shop(file_name):
+    f = open(file_name)
+    count_jobs, count_machines = 0, 0
+    processing_time, processing_order = [], []
+
+    for string in iter(f):
+        if string.startswith('number'):
+            string = next(f)
+            count_jobs, count_machines = [int(count) for count in re.findall(r'\d+', string)[:2]]
+        if string.startswith('processing'):
+            for _ in range(count_machines):
+                string = next(f)
+                processing_time.append([int(number) for number in re.findall(r'\d+', string)])
+
+    jobs_cl = Jobs(count_jobs)
+    machines_cl = Machines(count_machines)
+    processing_time = list(zip(*processing_time))
+
+    return JobSchedulingFrame(jobs_cl, machines_cl, processing_time, None)
 
 
 def create_gantt_chart(_schedule, filename='gantt_chart.html'):
