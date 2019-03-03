@@ -5,13 +5,15 @@ import plotly.figure_factory as ff
 
 from amyachev_degree.core import Jobs, Machines, JobSchedulingFrame
 
-# for open shop use False
-# count_job, count_machine, processing_time, processing_order = read_file('D:/pipeline_task.txt',True)
-# processing_time = list(zip(*processing_time)) # and comment this
-# TODO reimplemented for various input file formats
-
 
 def read_file_with_open_shop(file_name):  # FIXME
+    """
+    for open shop use False
+    count_job, count_machine, processing_time, processing_order = read_file('D:/pipeline_task.txt',True)
+    processing_time = list(zip(*processing_time)) # and comment this
+    :param file_name:
+    :return:
+    """
     f = open(file_name)
     count_jobs, count_machines = 0, 0
     processing_time, processing_order = [], []
@@ -34,7 +36,7 @@ def read_file_with_open_shop(file_name):  # FIXME
     jobs_cl = Jobs(count_jobs)
     machines_cl = Machines(count_machines)
 
-    return JobSchedulingFrame(jobs_cl, machines_cl, processing_time, processing_order)
+    return JobSchedulingFrame(jobs_cl, machines_cl, processing_time, processing_order, None)
 
 
 class FlowShopFormatError(Exception):
@@ -104,28 +106,32 @@ def read_flow_shop_instances(file_name):
     return frames
 
 
-def create_gantt_chart(_schedule, filename='gantt_chart.html'):
+def create_gantt_chart(schedule, filename='gantt_chart.html'):
+    """
+    :param schedule: Schedule object
+    :param filename: str object
+    :return:
+    """
     def sec_to_time(secs):
         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(secs))
 
-    df = []
-    for job in _schedule.jobs:
-        for duration in _schedule.process_times(job):
-            start_date = sec_to_time(duration[1])
-            end_date = sec_to_time(duration[2])
-            machine_number = duration[0] + 1
-            temp_dict = dict(Task="Machine #%d" % machine_number, Start=start_date, Finish=end_date)
-            df.append(temp_dict)
+    tasks_schedule = []
+    for job in schedule.jobs:
+        for duration in schedule.process_times(job):
+            start_date = sec_to_time(duration.begin_time)
+            end_date = sec_to_time(duration.end_time)
+            machine_number = duration.machine_number + 1
+            tasks_schedule.append(dict(Task="Machine #%d" % machine_number, Start=start_date, Finish=end_date))
 
-    fig = ff.create_gantt(df, group_tasks=True)
+    gantt_chart = ff.create_gantt(tasks_schedule, group_tasks=True)
 
-    sch = 0
-    for job in _schedule.jobs:
-        for operation, duration in enumerate(_schedule.process_times(job)):
-            start_date = sec_to_time(duration[1])
-            end_date = sec_to_time(duration[2])
-            text = "Start: %s, Finish: %s, Job #%d, Operation #%d" % (start_date, end_date, job + 1, operation + 1)
-            fig["data"][sch].update(text=text, hoverinfo="text")
-            sch += 1
+    task_counter = 0
+    for job in schedule.jobs:
+        for duration in schedule.process_times(job):
+            start_date = sec_to_time(duration.begin_time)
+            end_date = sec_to_time(duration.end_time)
+            text = "Start: %s, Finish: %s, Job #%d" % (start_date, end_date, job + 1)
+            gantt_chart["data"][task_counter].update(text=text, hoverinfo="text")
+            task_counter += 1
 
-    plotly.offline.plot(fig, filename=filename, auto_open=True)
+    plotly.offline.plot(gantt_chart, filename=filename, auto_open=True)

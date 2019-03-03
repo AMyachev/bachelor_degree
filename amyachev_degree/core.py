@@ -1,3 +1,6 @@
+from collections import namedtuple
+
+
 class Jobs:
     def __init__(self, count_job):
         self.count_jobs = count_job
@@ -106,35 +109,29 @@ class JobSchedulingFrame(object):
 
 
 def create_schedule(permutation, processing_time):
-    _schedule = {job: [] for job in permutation}
+    Duration = namedtuple('Duration', ['machine_number', 'begin_time', 'end_time'])
+    schedule = {job: [] for job in permutation}
     machines_time = [0 for _ in range(len(processing_time[0]))]
 
     for job in permutation:
-        temp_begin_time = machines_time[0]
-        temp_end_time = temp_begin_time + processing_time[job][0]
-        _schedule[job].append([0, temp_begin_time, temp_end_time])
-        machines_time[0] = temp_end_time
+        begin_time = machines_time[0]
+        end_time = begin_time + processing_time[job][0]
+        schedule[job].append(Duration(0, begin_time, end_time))
+        machines_time[0] = end_time
         for machine_index in range(1, len(processing_time[0])):
             job_time = processing_time[job][machine_index]
             machine_release_time = machines_time[machine_index]
             prev_machine_release_time = machines_time[machine_index - 1]
 
             if machine_release_time >= prev_machine_release_time:
-                temp_begin_time = machine_release_time
-                temp_end_time = temp_begin_time + job_time
-                machines_time[machine_index] = temp_end_time
+                begin_time = machine_release_time
+                end_time = begin_time + job_time
+                machines_time[machine_index] = end_time
             else:
-                temp_begin_time = prev_machine_release_time
-                temp_end_time = temp_begin_time + job_time
-                machines_time[machine_index] = temp_end_time
-            _schedule[job].append([machine_index, temp_begin_time, temp_end_time])
+                begin_time = prev_machine_release_time
+                end_time = begin_time + job_time
+                machines_time[machine_index] = end_time
+            schedule[job].append(Duration(machine_index, begin_time, end_time))
 
-    return Schedule(_schedule, machines_time[len(machines_time) - 1])
+    return Schedule(schedule, machines_time[len(machines_time) - 1])
 
-
-test_1 = create_schedule([2, 4, 3, 0, 1],
-                         [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])
-assert test_1.end_time == 114
-test_2 = create_schedule([4, 2, 3, 0, 1],
-                         [[17, 19, 13], [15, 11, 12], [14, 21, 16], [20, 16, 20], [16, 17, 17]])
-assert test_2.end_time == 115
