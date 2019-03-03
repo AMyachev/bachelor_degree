@@ -1,10 +1,11 @@
-from core import Machines, JobSchedulingFrame, create_schedule
-from exact_algorithm import johnson_algorithm
-# palmer_sequence = palmer_heuristics(job_scheduling_task)
-# print("palmer's sequence :", palmer_sequence)
+from amyachev_degree.core import Machines, JobSchedulingFrame, create_schedule
+from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
 def palmer_heuristics(flow_job_scheduling_frame):
+    """palmer_sequence = palmer_heuristics(job_scheduling_task)
+    print("palmer's sequence :", palmer_sequence)
+    """
     count_jobs = flow_job_scheduling_frame.count_jobs
     count_machines = flow_job_scheduling_frame.count_machines
     processing_time = flow_job_scheduling_frame.processing_time
@@ -20,13 +21,13 @@ def palmer_heuristics(flow_job_scheduling_frame):
     result_sequence.sort(key=lambda x: slope_sequence[x], reverse=True)
     return result_sequence
 
-# cds_sequence = campbell_dudek_smith(job_scheduling_task)
-# print("CDS's sequence :", cds_sequence)
-# schedule_1 = create_schedule(cds_sequence, job_scheduling_task.processing_time)
-# create_gantt_chart(schedule_1)
-
 
 def campbell_dudek_smith(job_scheduling_frame):
+    """cds_sequence = campbell_dudek_smith(job_scheduling_task)
+    print("CDS's sequence :", cds_sequence)
+    schedule_1 = create_schedule(cds_sequence, job_scheduling_task.processing_time)
+    create_gantt_chart(schedule_1)
+    """
     def a(_job_scheduling_frame, _sub_problem):                 # first stage for CDS heuristics
         times_for_first_stage = []
         for i in range(_job_scheduling_frame.count_jobs):
@@ -46,7 +47,7 @@ def campbell_dudek_smith(job_scheduling_frame):
             times_for_second_stage.append(sum_times)
         return times_for_second_stage
 
-    johnson_scheduling_frame = JobSchedulingFrame(job_scheduling_frame.jobs, Machines(2), [], None)
+    johnson_scheduling_frame = JobSchedulingFrame(job_scheduling_frame.jobs, Machines(2), [], None, None)
 
     jobs_sequences = []
     for sub_problem in range(1, job_scheduling_frame.count_machines):
@@ -72,9 +73,10 @@ def neh_heuristics(flow_job_scheduling_frame):
             sum_time += processing_time[job][i]
         sum_sequence.append(sum_time)
 
-    init_job_sequence.sort(key=lambda x: sum_sequence[x])
+    init_job_sequence.sort(key=lambda x: sum_sequence[x], reverse=True)
     result_sequence = [init_job_sequence[0]]
     for i in range(1, count_jobs):
+
         _min = -1
         best_sequence = []
         for j in range(0, i + 1):

@@ -1,4 +1,4 @@
-from core import Schedule
+from amyachev_degree.core import Schedule
 
 # schedule_frontal = frontal_algorithm(job_scheduling_task)
 # create_gantt_chart(schedule_frontal)

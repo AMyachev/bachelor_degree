@@ -58,11 +58,12 @@ class Schedule(object):
 
 
 class JobSchedulingFrame(object):
-    def __init__(self, jobs_cl, machines_cl, processing_time, processing_order):
+    def __init__(self, jobs_cl, machines_cl, processing_time, processing_order, upper_bound_makespan):
         self.jobs = jobs_cl
         self.machines = machines_cl
         self.processing_time = processing_time
         self.processing_order = processing_order
+        self.upper_bound_makespan = upper_bound_makespan
 
     @property
     def count_jobs(self):
