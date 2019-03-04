@@ -109,7 +109,7 @@ class JobSchedulingFrame(object):
 
 
 def create_schedule(permutation, processing_time):
-    Duration = namedtuple('Duration', ['machine_number', 'begin_time', 'end_time'])
+    Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
     schedule = {job: [] for job in permutation}
     machines_time = [0 for _ in range(len(processing_time[0]))]
 

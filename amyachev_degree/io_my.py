@@ -112,26 +112,24 @@ def create_gantt_chart(schedule, filename='gantt_chart.html'):
     :param filename: str object
     :return:
     """
-    def sec_to_time(secs):
+    def sec_to_date_time(secs):  # secs count from 1970-01-01 03:00:00
         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(secs))
 
+    texts = []
     tasks_schedule = []
-    for job in schedule.jobs:
-        for duration in schedule.process_times(job):
-            start_date = sec_to_time(duration.begin_time)
-            end_date = sec_to_time(duration.end_time)
-            machine_number = duration.machine_number + 1
+    for index_job in schedule.jobs:
+        for process_time in schedule.process_times(index_job):
+            start_date = sec_to_date_time(process_time.begin_time)
+            end_date = sec_to_date_time(process_time.end_time)
+            machine_number = process_time.machine_index + 1  # index starts with 0, number starts with 1
             tasks_schedule.append(dict(Task="Machine #%d" % machine_number, Start=start_date, Finish=end_date))
+
+            text = "Start: %s, Finish: %s, Job #%d" % (start_date, end_date, index_job + 1)  # convert index to number
+            texts.append(text)
 
     gantt_chart = ff.create_gantt(tasks_schedule, group_tasks=True)
 
-    task_counter = 0
-    for job in schedule.jobs:
-        for duration in schedule.process_times(job):
-            start_date = sec_to_time(duration.begin_time)
-            end_date = sec_to_time(duration.end_time)
-            text = "Start: %s, Finish: %s, Job #%d" % (start_date, end_date, job + 1)
-            gantt_chart["data"][task_counter].update(text=text, hoverinfo="text")
-            task_counter += 1
+    for dict_counter in range(len(gantt_chart["data"])):
+        gantt_chart["data"][dict_counter].update(text=texts[dict_counter], hoverinfo="text")
 
     plotly.offline.plot(gantt_chart, filename=filename, auto_open=True)
