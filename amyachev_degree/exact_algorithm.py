@@ -21,8 +21,8 @@ def johnson_algorithm(_johnson_scheduling_frame):
     if _johnson_scheduling_frame.count_machines != 2:
         raise ValueError
 
-    first_machine_time = _johnson_scheduling_frame.processing_time[0]
-    second_machine_time = _johnson_scheduling_frame.processing_time[1]
+    first_machine_time = _johnson_scheduling_frame.processing_times[0]
+    second_machine_time = _johnson_scheduling_frame.processing_times[1]
 
     min_item_first_machine = min_with_check(first_machine_time, job_in_permutation)
     min_item_second_machine = min_with_check(second_machine_time, job_in_permutation)

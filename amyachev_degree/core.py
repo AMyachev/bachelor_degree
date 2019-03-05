@@ -64,7 +64,7 @@ class JobSchedulingFrame(object):
     def __init__(self, jobs_cl, machines_cl, processing_time, processing_order, upper_bound_makespan):
         self.jobs = jobs_cl
         self.machines = machines_cl
-        self.processing_time = processing_time
+        self.processing_times = processing_time
         self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
 
@@ -81,7 +81,10 @@ class JobSchedulingFrame(object):
         return self.jobs.all_ready()
 
     def get_processing_time(self, job, machine):
-        return self.processing_time[job][machine]
+        return self.processing_times[job][machine]
+
+    def set_processing_times(self, processing_times):
+        self.processing_times = processing_times
 
     def ready_jobs(self, current_time):
         return self.jobs.list_ready(current_time)
@@ -90,7 +93,7 @@ class JobSchedulingFrame(object):
         return self.machines.list_ready(current_time)
 
     def work_on_machine(self, job, machine, _current_time):
-        busy_time = self.processing_time[job][machine]
+        busy_time = self.processing_times[job][machine]
         self.jobs.job_release_time[job] = _current_time + busy_time
         self.machines.take_machine_time(machine, _current_time, busy_time)
         self.jobs.job_current_state[job] += 1
