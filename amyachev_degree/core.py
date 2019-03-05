@@ -80,6 +80,9 @@ class JobSchedulingFrame(object):
     def schedule_ready(self):
         return self.jobs.all_ready()
 
+    def get_processing_time(self, job, machine):
+        return self.processing_time[job][machine]
+
     def ready_jobs(self, current_time):
         return self.jobs.list_ready(current_time)
 

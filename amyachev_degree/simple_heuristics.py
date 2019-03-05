@@ -2,24 +2,28 @@ from amyachev_degree.core import Machines, JobSchedulingFrame, create_schedule
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
-def palmer_heuristics(flow_job_scheduling_frame):
-    """palmer_sequence = palmer_heuristics(job_scheduling_task)
-    print("palmer's sequence :", palmer_sequence)
+def palmer_heuristics(flow_job_frame):
     """
-    count_jobs = flow_job_scheduling_frame.count_jobs
-    count_machines = flow_job_scheduling_frame.count_machines
-    processing_time = flow_job_scheduling_frame.processing_time
+    Journal Paper:
+        Palmer, D.S., 1965. Sequencing jobs through a multi-stage process in the minimum total time a quick method of
+        obtaining a near optimum. Operations Research Quarterly 16(1), 101-107
+    :param flow_job_frame: JobSchedulingFrame
+    :return: jobs_indexes: list
+    """
+    count_jobs = flow_job_frame.count_jobs
+    count_machines = flow_job_frame.count_machines
 
-    result_sequence = [index_job for index_job in range(count_jobs)]
-    slope_sequence = []
-    for job in range(count_jobs):
+    slope_indexes = []
+    for job_index in range(count_jobs):
         slope_index = 0
-        for i in range(count_machines):
-            slope_index -= (count_machines - (2 * (i + 1) - 1)) * processing_time[job][i]
-        slope_sequence.append(slope_index)
+        for machine_index in range(count_machines):
+            slope_index -= (count_machines - (2 * (machine_index + 1) - 1)) * \
+                           flow_job_frame.get_processing_time(job_index, machine_index)
+        slope_indexes.append(slope_index)
 
-    result_sequence.sort(key=lambda x: slope_sequence[x], reverse=True)
-    return result_sequence
+    jobs_indexes = [job_index for job_index in range(count_jobs)]
+    jobs_indexes.sort(key=lambda _job_index: slope_indexes[_job_index], reverse=True)
+    return jobs_indexes
 
 
 def campbell_dudek_smith(job_scheduling_frame):
