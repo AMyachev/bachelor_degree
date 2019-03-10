@@ -1,3 +1,5 @@
+import time
+import random as rd
 from collections import namedtuple
 
 
@@ -60,13 +62,19 @@ class Schedule(object):
         return self.jobs_duration_times[job]
 
 
-class JobSchedulingFrame(object):
-    def __init__(self, jobs_cl, machines_cl, processing_time, processing_order, upper_bound_makespan):
+class JobSchedulingFrame:
+    def __init__(self, jobs_cl, machines_cl, processing_time, processing_order=None,
+                 upper_bound_makespan=None, initial_seed=None):
         self.jobs = jobs_cl
         self.machines = machines_cl
         self.processing_times = processing_time
         self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
+        self.init_seed = initial_seed
+
+    @property
+    def initial_seed(self):
+        return self.init_seed
 
     @property
     def count_jobs(self):
@@ -113,13 +121,24 @@ class JobSchedulingFrame(object):
                 self.jobs.job_release_time[job] = -1
                 return None
 
+    def __repr__(self):  # processing time is transposed regarding taillard pattern now
+        taillard_pattern = """
+number of jobs, number of machines, initial seed, upper bound and lower bound :
+          %d           %d   %d        1278        1232
+processing times :
+%s
+"""
+        proc_time_str = ''.join([" %3s" % time if j != len(times) - 1 else " %3s\n" % time
+                                 for times in self.processing_times for j, time in enumerate(times)])
+        return taillard_pattern % (self.count_jobs, self.count_machines, self.initial_seed, proc_time_str)
 
-def create_schedule(permutation, processing_time):
+
+def create_schedule(jobs_sequence, processing_time):
     Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
-    schedule = {job: [] for job in permutation}
+    schedule = {job: [] for job in jobs_sequence}
     machines_time = [0 for _ in range(len(processing_time[0]))]
 
-    for job in permutation:
+    for job in jobs_sequence:
         begin_time = machines_time[0]
         end_time = begin_time + processing_time[job][0]
         schedule[job].append(Duration(0, begin_time, end_time))
@@ -141,3 +160,19 @@ def create_schedule(permutation, processing_time):
 
     return Schedule(schedule, machines_time[len(machines_time) - 1])
 
+
+def flow_job_generator(count_jobs, count_machines, initial_seed=None):
+    if initial_seed is not None:
+        rd.seed(initial_seed)
+    else:
+        initial_seed = time.time()
+        rd.seed(initial_seed)
+    processing_time = []
+    for j in range(count_jobs):
+        machine_time = []
+        for i in range(count_machines):
+            machine_time.append(rd.randint(1, 99))
+        processing_time.append(machine_time)
+    jobs = Jobs(count_jobs)
+    machines = Machines(count_machines)
+    return JobSchedulingFrame(jobs, machines, processing_time, initial_seed=initial_seed)
