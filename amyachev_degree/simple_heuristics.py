@@ -26,7 +26,7 @@ def palmer_heuristics(flow_job_frame):
     return heuristics_solution
 
 
-def campbell_dudek_smith(flow_job_frame):
+def campbell_dudek_smith(flow_job_frame):  # clean me
     """cds_sequence = campbell_dudek_smith(job_scheduling_task)
     print("CDS's sequence :", cds_sequence)
     schedule_1 = create_schedule(cds_sequence, job_scheduling_task.processing_time)
@@ -67,10 +67,10 @@ def campbell_dudek_smith(flow_job_frame):
     return johnson_solutions_with_end_time[0][0]
 
 
-def neh_heuristics(flow_job_scheduling_frame):
+def neh_heuristics(flow_job_scheduling_frame):  # clean me
     count_jobs = flow_job_scheduling_frame.count_jobs
     count_machines = flow_job_scheduling_frame.count_machines
-    processing_time = flow_job_scheduling_frame.processing_time
+    processing_time = flow_job_scheduling_frame.processing_times
 
     init_job_sequence = [index_job for index_job in range(count_jobs)]
     sum_sequence = []

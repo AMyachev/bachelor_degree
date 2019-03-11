@@ -1,4 +1,4 @@
-def johnson_algorithm(_johnson_scheduling_frame):
+def johnson_algorithm(_johnson_scheduling_frame, transpose=False):  # FIXME remove transpose hack
     def min_with_check(job_times, _job_in_permutation):
         min_time = -1
         for index, _time in enumerate(job_times):
@@ -21,8 +21,15 @@ def johnson_algorithm(_johnson_scheduling_frame):
     if _johnson_scheduling_frame.count_machines != 2:
         raise ValueError
 
-    first_machine_time = _johnson_scheduling_frame.processing_times[0]
-    second_machine_time = _johnson_scheduling_frame.processing_times[1]
+    if not transpose:
+        first_machine_time = _johnson_scheduling_frame.processing_times[0]
+        second_machine_time = _johnson_scheduling_frame.processing_times[1]
+    else:
+        first_machine_time = []
+        second_machine_time = []
+        for i in range(_johnson_scheduling_frame.count_jobs):
+            first_machine_time.append(_johnson_scheduling_frame.processing_times[i][0])
+            second_machine_time.append(_johnson_scheduling_frame.processing_times[i][1])
 
     min_item_first_machine = min_with_check(first_machine_time, job_in_permutation)
     min_item_second_machine = min_with_check(second_machine_time, job_in_permutation)

@@ -122,9 +122,8 @@ class JobSchedulingFrame:
                 return None
 
     def __repr__(self):  # processing time is transposed regarding taillard pattern now
-        taillard_pattern = """
-number of jobs, number of machines, initial seed, upper bound and lower bound :
-          %d           %d   %d        1278        1232
+        taillard_pattern = """number of jobs, number of machines, initial seed, upper bound and lower bound :
+          %d           %d   %d        Nan        Nan
 processing times :
 %s
 """
@@ -175,4 +174,21 @@ def flow_job_generator(count_jobs, count_machines, initial_seed=None):
         processing_time.append(machine_time)
     jobs = Jobs(count_jobs)
     machines = Machines(count_machines)
+    return JobSchedulingFrame(jobs, machines, processing_time, initial_seed=initial_seed)
+
+
+def johnson_three_machines_generator(count_jobs, initial_seed=None):
+    if initial_seed is not None:
+        rd.seed(initial_seed)
+    else:
+        initial_seed = int(time.time())
+        rd.seed(initial_seed)
+    processing_time = []
+    for j in range(count_jobs):
+        machine_time = []
+        for i in range(-1, 2):
+            machine_time.append(rd.randint(1 + 100 * (i * i), 99 + 100 * (i * i)))
+        processing_time.append(machine_time)
+    jobs = Jobs(count_jobs)
+    machines = Machines(3)
     return JobSchedulingFrame(jobs, machines, processing_time, initial_seed=initial_seed)

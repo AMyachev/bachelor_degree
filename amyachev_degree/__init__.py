@@ -1,4 +1,4 @@
-from amyachev_degree.core import create_schedule
+from amyachev_degree.core import create_schedule, flow_job_generator, johnson_three_machines_generator
 from amyachev_degree.io_my import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import neh_heuristics, palmer_heuristics, campbell_dudek_smith
 from amyachev_degree.exact_algorithm import johnson_algorithm
