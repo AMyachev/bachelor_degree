@@ -1,61 +1,30 @@
-def johnson_algorithm(_johnson_scheduling_frame, transpose=False):  # FIXME remove transpose hack
-    def min_with_check(job_times, _job_in_permutation):
-        min_time = -1
-        for index, _time in enumerate(job_times):
-            if _job_in_permutation[index] == 0:
-                if min_time == -1:
-                    min_time = _time
-                elif _time < min_time:
-                    min_time = _time
-        return min_time
-
-    def index_with_check(job_times, min_value, _job_in_permutation):
-        for index, _time in enumerate(job_times):
-            if _time == min_value and _job_in_permutation[index] == 0:
-                return index
-        return -1
-
-    output = []
-    index_insert = 0
-    job_in_permutation = [0 for _ in range(_johnson_scheduling_frame.count_jobs)]
+def johnson_algorithm(_johnson_scheduling_frame):
+    """
+    case of two machines of flow shop problem
+    :param _johnson_scheduling_frame: JobSchedulingFrame
+    :return: exact_solution: list of job index
+    """
     if _johnson_scheduling_frame.count_machines != 2:
         raise ValueError
 
-    if not transpose:
-        first_machine_time = _johnson_scheduling_frame.processing_times[0]
-        second_machine_time = _johnson_scheduling_frame.processing_times[1]
-    else:
-        first_machine_time = []
-        second_machine_time = []
-        for i in range(_johnson_scheduling_frame.count_jobs):
-            first_machine_time.append(_johnson_scheduling_frame.processing_times[i][0])
-            second_machine_time.append(_johnson_scheduling_frame.processing_times[i][1])
+    exact_solution = [i for i in range(_johnson_scheduling_frame.count_jobs)]  # init job indexes
 
-    min_item_first_machine = min_with_check(first_machine_time, job_in_permutation)
-    min_item_second_machine = min_with_check(second_machine_time, job_in_permutation)
+    exact_solution.sort(
+        key=lambda job_index: min(
+                                _johnson_scheduling_frame.get_processing_time(job_index, 0),
+                                _johnson_scheduling_frame.get_processing_time(job_index, 1)
+                              )
+    )
 
-    for i in range(_johnson_scheduling_frame.count_jobs):
-        if min_item_first_machine == -1 or min_item_second_machine == -1:
-            raise ValueError
-        if min_item_first_machine > min_item_second_machine:
-            index_job = index_with_check(second_machine_time, min_item_second_machine, job_in_permutation)
-            if index_job == -1:
-                raise ValueError
-            output.insert(index_insert, index_job)
-            job_in_permutation[index_job] = 1
+    first_machine_jobs = []
+    second_machine_jobs = []
+    for job_index in exact_solution:
+        frst = _johnson_scheduling_frame.get_processing_time(job_index, 0)
+        scnd = _johnson_scheduling_frame.get_processing_time(job_index, 1)
+        first_machine_jobs.append(job_index) if frst < scnd else second_machine_jobs.append(job_index)
 
-            min_item_first_machine = min_with_check(first_machine_time, job_in_permutation)
-            min_item_second_machine = min_with_check(second_machine_time, job_in_permutation)
+    exact_solution = first_machine_jobs
+    second_machine_jobs.reverse()
+    exact_solution.extend(second_machine_jobs)
 
-        else:
-            index_job = index_with_check(first_machine_time, min_item_first_machine, job_in_permutation)
-            if index_job == -1:
-                raise ValueError
-            output. insert(index_insert, index_job)
-            job_in_permutation[index_job] = 1
-            index_insert += 1
-
-            min_item_first_machine = min_with_check(first_machine_time, job_in_permutation)
-            min_item_second_machine = min_with_check(second_machine_time, job_in_permutation)
-
-    return output
+    return exact_solution

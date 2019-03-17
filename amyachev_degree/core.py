@@ -127,8 +127,8 @@ class JobSchedulingFrame:
 processing times :
 %s
 """
-        proc_time_str = ''.join([" %3s" % time if j != len(times) - 1 else " %3s\n" % time
-                                 for times in self.processing_times for j, time in enumerate(times)])
+        proc_time_str = ''.join([" %3s" % _time if j != len(times) - 1 else " %3s\n" % _time
+                                 for times in self.processing_times for j, _time in enumerate(times)])
         return taillard_pattern % (self.count_jobs, self.count_machines, self.initial_seed, proc_time_str)
 
 
