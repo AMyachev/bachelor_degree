@@ -8,7 +8,7 @@ def palmer_heuristics(flow_job_frame):
         Palmer, D.S., 1965. Sequencing jobs through a multi-stage process in the minimum total time a quick method of
         obtaining a near optimum. Operations Research Quarterly 16(1), 101-107
     :param flow_job_frame: JobSchedulingFrame
-    :return: heuristics_solution: list
+    :return heuristics_solution: list of job index
     """
     count_jobs = flow_job_frame.count_jobs
     count_machines = flow_job_frame.count_machines
@@ -26,11 +26,12 @@ def palmer_heuristics(flow_job_frame):
     return heuristics_solution
 
 
-def campbell_dudek_smith(flow_job_frame):  # clean me
-    """cds_sequence = campbell_dudek_smith(job_scheduling_task)
-    print("CDS's sequence :", cds_sequence)
-    schedule_1 = create_schedule(cds_sequence, job_scheduling_task.processing_time)
-    create_gantt_chart(schedule_1)
+def cds_heuristics(flow_job_frame):
+    """
+    Developed:
+        Campbell, Dudek, and Smith in 1970
+    :param flow_job_frame: JobSchedulingFrame
+    :return heuristics_solution: list of job index
     """
     def compute_processing_times_first_stage(_flow_job_frame, _sub_problem):
         processing_times = []
@@ -67,36 +68,42 @@ def campbell_dudek_smith(flow_job_frame):  # clean me
     return johnson_solutions_with_end_time[0][0]
 
 
-def neh_heuristics(flow_job_scheduling_frame):  # clean me
-    count_jobs = flow_job_scheduling_frame.count_jobs
-    count_machines = flow_job_scheduling_frame.count_machines
-    processing_time = flow_job_scheduling_frame.processing_times
+def neh_heuristics(flow_job_frame):
+    """
+    Journal Paper:
+        Nawaz,M., Enscore,Jr.E.E, and Ham,I. (1983) A Heuristics Algorithm for the m Machine,
+        n Job Flowshop Sequencing Problem. Omega-International Journal of Management Science
+        11(1), 91-95
+    :param flow_job_frame: JobSchedulingFrame
+    :return heuristics_solution: list of job index
+    """
+    count_jobs = flow_job_frame.count_jobs
+    count_machines = flow_job_frame.count_machines
 
-    init_job_sequence = [index_job for index_job in range(count_jobs)]
-    sum_sequence = []
-    for job in range(count_jobs):
-        sum_time = 0
-        for i in range(count_machines):
-            sum_time += processing_time[job][i]
-        sum_sequence.append(sum_time)
+    all_processing_times = [0] * count_jobs
+    for j in range(count_jobs):
+        for m in range(count_machines):
+            all_processing_times[j] += flow_job_frame.get_processing_time(j, m)
 
-    init_job_sequence.sort(key=lambda x: sum_sequence[x], reverse=True)
-    result_sequence = [init_job_sequence[0]]
-    for i in range(1, count_jobs):
+    init_jobs = [j for j in range(count_jobs)]
+    init_jobs.sort(key=lambda x: all_processing_times[x], reverse=True)
+    neh_solution = [init_jobs[0]]  # create list with job, which have max processing time
 
-        _min = -1
-        best_sequence = []
-        for j in range(0, i + 1):
-            temp_sequence = list(result_sequence)
-            temp_sequence.insert(j, init_job_sequence[i])
-            if _min == -1:
-                _min = create_schedule(temp_sequence, processing_time).end_time
-                best_sequence = temp_sequence
+    # local search
+    for j in range(1, count_jobs):
+        min_end_time = -1
+        best_insert_place = 0
+        for i in range(0, j + 1):
+            neh_solution.insert(i, init_jobs[j])
+            if min_end_time == -1:
+                min_end_time = create_schedule(neh_solution, flow_job_frame.processing_times).end_time
+                best_insert_place = i
             else:
-                end_time = create_schedule(temp_sequence, processing_time).end_time
-                if _min > end_time:
-                    _min = end_time
-                    best_sequence = temp_sequence
-        result_sequence = list(best_sequence)
+                end_time = create_schedule(neh_solution, flow_job_frame.processing_times).end_time
+                if min_end_time > end_time:
+                    min_end_time = end_time
+                    best_insert_place = i
+            neh_solution.pop(i)
+        neh_solution.insert(best_insert_place, init_jobs[j])
 
-    return result_sequence
+    return neh_solution
