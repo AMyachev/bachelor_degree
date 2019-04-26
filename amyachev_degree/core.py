@@ -64,7 +64,7 @@ class Schedule(object):
 
 class JobSchedulingFrame:
     def __init__(self, jobs_cl, machines_cl, processing_time, processing_order=None,
-                 upper_bound_makespan=None, initial_seed=None):
+                 upper_bound_makespan=None, initial_seed="NaN"):
         self.jobs = jobs_cl
         self.machines = machines_cl
         self.processing_times = processing_time
@@ -121,14 +121,15 @@ class JobSchedulingFrame:
                 self.jobs.job_release_time[job] = -1
                 return None
 
-    def __repr__(self):  # processing time is transposed regarding taillard pattern now
+    def __str__(self):  # processing time is transposed regarding taillard pattern now
         taillard_pattern = """number of jobs, number of machines, initial seed, upper bound and lower bound :
-          %d           %d   %d        Nan        Nan
+          %s           %s   %s        Nan        Nan
 processing times :
 %s
 """
+        processing_times = list(zip(*self.processing_times))
         proc_time_str = ''.join([" %3s" % _time if j != len(times) - 1 else " %3s\n" % _time
-                                 for times in self.processing_times for j, _time in enumerate(times)])
+                                 for times in processing_times for j, _time in enumerate(times)])
         return taillard_pattern % (self.count_jobs, self.count_machines, self.initial_seed, proc_time_str)
 
 
