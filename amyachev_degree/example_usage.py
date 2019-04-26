@@ -1,7 +1,5 @@
-from amyachev_degree.core import create_schedule, flow_job_generator, johnson_three_machines_generator
-from amyachev_degree.io_my import read_flow_shop_instances, create_gantt_chart
-from amyachev_degree.simple_heuristics import neh_heuristics, palmer_heuristics, cds_heuristics
-from amyachev_degree.exact_algorithm import johnson_algorithm
+from amyachev_degree import (
+    read_flow_shop_instances, neh_heuristics, create_schedule)
 import time
 
 start = time.time()
@@ -12,8 +10,8 @@ job_scheduling_frames = read_flow_shop_instances('D:/pipeline_task.txt')
 # for i in range(10):
 #    job_scheduling_frames.append(flow_job_generator(20, 2, 873654221 + i))
 
-print('count job - ' + str(job_scheduling_frames[0].count_jobs) + ' count_machines - ' +
-      str(job_scheduling_frames[0].count_machines))
+print('count job - ' + str(job_scheduling_frames[0].count_jobs) +
+      ' count_machines - ' + str(job_scheduling_frames[0].count_machines))
 neh_end_times = []
 for frame in job_scheduling_frames:
     print(frame)

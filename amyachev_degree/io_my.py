@@ -9,7 +9,8 @@ from amyachev_degree.core import Jobs, Machines, JobSchedulingFrame
 def read_file_with_open_shop(file_name):  # FIXME
     """
     for open shop use False
-    count_job, count_machine, processing_time, processing_order = read_file('D:/pipeline_task.txt',True)
+    count_job, count_machine, \
+    processing_time, processing_order = read_file('D:/pipeline_task.txt',True)
     processing_time = list(zip(*processing_time)) # and comment this
     :param file_name:
     :return:
@@ -21,22 +22,29 @@ def read_file_with_open_shop(file_name):  # FIXME
     for string in iter(f):
         if string.startswith('number'):
             string = next(f)
-            count_jobs, count_machines = [int(count) for count in re.findall(r'\d+', string)[:2]]
+            count_jobs, count_machines = [int(count)
+                                          for count in re.findall(r'\d+',
+                                                                  string)[:2]]
         if string.startswith('processing'):
             for _ in range(count_jobs):
                 string = next(f)
-                processing_time.append([int(number) for number in re.findall(r'\d+', string)])
+                processing_time.append([int(number)
+                                        for number in re.findall(r'\d+',
+                                                                 string)])
         if string.startswith('machines'):
             for _ in range(count_jobs):
                 string = next(f)
-                processing_order.append([int(number) for number in re.findall(r'\d+', string)])
+                processing_order.append([int(number)
+                                        for number in re.findall(r'\d+',
+                                                                 string)])
     if not processing_order:
         processing_order = None
     f.close()
     jobs_cl = Jobs(count_jobs)
     machines_cl = Machines(count_machines)
 
-    return JobSchedulingFrame(jobs_cl, machines_cl, processing_time, processing_order, None)
+    return JobSchedulingFrame(jobs_cl, machines_cl,
+                              processing_time, processing_order, None)
 
 
 class FlowShopFormatError(Exception):
@@ -45,7 +53,8 @@ class FlowShopFormatError(Exception):
         if counter_lines is not None:
             self.error_message = "line " + str(counter_lines)
         else:
-            self.error_message = "\nFile is empty or don't have strings with these first words: 'number', 'processing'"
+            self.error_message = "\nFile is empty or don't have strings with \
+                                 these first words: 'number', 'processing'"
 
     def __str__(self):
         return 'File "%s", %s' % (self.file_name, self.error_message)
@@ -53,8 +62,10 @@ class FlowShopFormatError(Exception):
 
 def read_flow_shop_instances(file_name):
     """
-    file format (http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html)
-        number of jobs, number of machines, initial seed, upper bound and lower bound :
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+    file format:
+        number of jobs, number of machines, initial seed,
+        upper bound and lower bound :
               20           5   873654221        1278        1232
         processing times :
         54 83 15 71 77 36 53 38 27 87 76 91 14 29 12 77 32 87 68 94
@@ -74,26 +85,36 @@ def read_flow_shop_instances(file_name):
         counter_lines += 1
         try:
             if string.strip().startswith('number'):
-                string = next(file); counter_lines += 1
+                string = next(file)
+                counter_lines += 1
                 params = re.findall(r'\d+', string)[:4]
                 if len(params) != 4:
                     raise FlowShopFormatError(file_name, counter_lines)
-                count_jobs, count_machines, _, upper_bound_makespan = (int(param) for param in params)
+                count_jobs, count_machines, \
+                    _, upper_bound_makespan = (int(param) for param in params)
 
-                string = next(file); counter_lines += 1
+                string = next(file)
+                counter_lines += 1
                 if string.strip().startswith('processing'):
                     processing_time = []
                     for _ in range(count_machines):
-                        string = next(file); counter_lines += 1
+                        string = next(file)
+                        counter_lines += 1
                         times = re.findall(r'\d+', string)
                         if len(times) != count_jobs:
                             raise FlowShopFormatError(file_name, counter_lines)
-                        processing_time.append((int(number) for number in times))
+                        processing_time.append((int(time) for time in times))
 
                     jobs_cl = Jobs(count_jobs)
                     machines_cl = Machines(count_machines)
                     processing_time = list(zip(*processing_time))  # transpose
-                    frames.append(JobSchedulingFrame(jobs_cl, machines_cl, processing_time, None, upper_bound_makespan))
+                    frames.append(
+                        JobSchedulingFrame(
+                            jobs_cl, machines_cl,
+                            processing_time, None,
+                            upper_bound_makespan
+                        )
+                    )
                 else:
                     raise FlowShopFormatError(file_name, counter_lines)
         except StopIteration:
@@ -117,19 +138,21 @@ def create_gantt_chart(schedule, filename='gantt_chart.html'):
 
     texts = []
     tasks_schedule = []
+    format = "Start: %s, Finish: %s, Job #%d"
     for index_job in schedule.jobs:
         for process_time in schedule.process_times(index_job):
             start_date = sec_to_date_time(process_time.begin_time)
             end_date = sec_to_date_time(process_time.end_time)
-            machine_number = process_time.machine_index + 1  # index starts with 0, number starts with 1
-            tasks_schedule.append(dict(Task="Machine #%d" % machine_number, Start=start_date, Finish=end_date))
-
-            text = "Start: %s, Finish: %s, Job #%d" % (start_date, end_date, index_job + 1)  # convert index to number
+            machine_number = process_time.machine_index + 1  # index -> number
+            tasks_schedule.append(dict(Task="Machine #%d" % machine_number,
+                                       Start=start_date, Finish=end_date))
+            text = format % (start_date, end_date, index_job + 1)
             texts.append(text)
 
     gantt_chart = ff.create_gantt(tasks_schedule, group_tasks=True)
 
     for dict_counter in range(len(gantt_chart["data"])):
-        gantt_chart["data"][dict_counter].update(text=texts[dict_counter], hoverinfo="text")
+        gantt_chart["data"][dict_counter].update(text=texts[dict_counter],
+                                                 hoverinfo="text")
 
     plotly.offline.plot(gantt_chart, filename=filename, auto_open=True)

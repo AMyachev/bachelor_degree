@@ -63,7 +63,8 @@ class Schedule(object):
 
 
 class JobSchedulingFrame:
-    def __init__(self, jobs_cl, machines_cl, processing_time, processing_order=None,
+    def __init__(self, jobs_cl, machines_cl,
+                 processing_time, processing_order=None,
                  upper_bound_makespan=None, initial_seed="NaN"):
         self.jobs = jobs_cl
         self.machines = machines_cl
@@ -109,7 +110,8 @@ class JobSchedulingFrame:
     def next_ready_machine(self, job):
         if self.processing_order:
             try:
-                return self.processing_order[job][self.jobs.job_current_state[job] + 1] - 1
+                next_state = self.jobs.job_current_state[job] + 1
+                return self.processing_order[job][next_state] - 1
             except IndexError:
                 self.jobs.job_release_time[job] = -1
                 return None
@@ -121,20 +123,29 @@ class JobSchedulingFrame:
                 self.jobs.job_release_time[job] = -1
                 return None
 
-    def __str__(self):  # processing time is transposed regarding taillard pattern now
-        taillard_pattern = """number of jobs, number of machines, initial seed, upper bound and lower bound :
+    def __str__(self):
+        taillard_pattern = """number of jobs, number of machines,\
+initial seed, upper bound and lower bound :
           %s           %s   %s        Nan        Nan
 processing times :
 %s
 """
-        processing_times = list(zip(*self.processing_times))
-        proc_time_str = ''.join([" %3s" % _time if j != len(times) - 1 else " %3s\n" % _time
-                                 for times in processing_times for j, _time in enumerate(times)])
-        return taillard_pattern % (self.count_jobs, self.count_machines, self.initial_seed, proc_time_str)
+        processing_times = list(zip(*self.processing_times))  # transpose
+        format = " %3s"
+        format_next_line = format + '\n'
+        proc_times = ''.join([format % time if idx != len(times) - 1
+                              else format_next_line % time
+                              for times in processing_times
+                              for idx, time in enumerate(times)])
+
+        return taillard_pattern % (self.count_jobs, self.count_machines,
+                                   self.initial_seed, proc_times)
 
 
 def create_schedule(jobs_sequence, processing_time):
-    Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
+    Duration = namedtuple('Duration', ['machine_index',
+                                       'begin_time',
+                                       'end_time'])
     schedule = {job: [] for job in jobs_sequence}
     machines_time = [0 for _ in range(len(processing_time[0]))]
 
@@ -175,7 +186,8 @@ def flow_job_generator(count_jobs, count_machines, initial_seed=None):
         processing_time.append(machine_time)
     jobs = Jobs(count_jobs)
     machines = Machines(count_machines)
-    return JobSchedulingFrame(jobs, machines, processing_time, initial_seed=initial_seed)
+    return JobSchedulingFrame(jobs, machines,
+                              processing_time, initial_seed=initial_seed)
 
 
 def johnson_three_machines_generator(count_jobs, initial_seed=None):
@@ -188,8 +200,11 @@ def johnson_three_machines_generator(count_jobs, initial_seed=None):
     for j in range(count_jobs):
         machine_time = []
         for i in range(-1, 2):
-            machine_time.append(rd.randint(1 + 100 * (i * i), 99 + 100 * (i * i)))
+            min_value = 1 + 100 * (i * i)
+            max_calue = 99 + 100 * (i * i)
+            machine_time.append(rd.randint(min_value, max_calue))
         processing_time.append(machine_time)
     jobs = Jobs(count_jobs)
     machines = Machines(3)
-    return JobSchedulingFrame(jobs, machines, processing_time, initial_seed=initial_seed)
+    return JobSchedulingFrame(jobs, machines,
+                              processing_time, initial_seed=initial_seed)

@@ -1,8 +1,7 @@
 from amyachev_degree.core import Schedule
 
-# schedule_frontal = frontal_algorithm(job_scheduling_task)
-# create_gantt_chart(schedule_frontal)
-# print("frontal end_time", schedule_frontal.end_time)
+# frontal_algorithm is unnecessary until support
+# appears for 'open fob scheduling'
 
 
 def frontal_algorithm(_job_scheduling_task):
@@ -15,9 +14,13 @@ def frontal_algorithm(_job_scheduling_task):
         for job in ready_jobs:
             next_car = _job_scheduling_task.next_ready_machine(job)
             if next_car in ready_machines:
-                _job_scheduling_task.work_on_machine(job, next_car, current_time)
-                _schedule[job].append((next_car, current_time,
-                                      current_time + _job_scheduling_task.processing_time[job][next_car]))
+                _job_scheduling_task.work_on_machine(job, next_car,
+                                                     current_time)
+                _schedule[job].append(
+                    (next_car, current_time,
+                     current_time +
+                        _job_scheduling_task.processing_time[job][next_car])
+                )
             ready_machines = _job_scheduling_task.ready_machines(current_time)
         current_time += 1
 
