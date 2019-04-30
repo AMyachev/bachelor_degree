@@ -69,8 +69,7 @@ def cds_heuristics(flow_job_frame):
              compute_processing_times_scnd_stage(flow_job_frame, sub_problem)]
         )
         johnson_solution = johnson_algorithm(frame)
-        end_time = create_schedule(johnson_solution,
-                                   flow_job_frame.processing_times).end_time
+        end_time = create_schedule(flow_job_frame, johnson_solution).end_time
         johnson_solutions_with_end_time.append((johnson_solution, end_time))
 
     johnson_solutions_with_end_time.sort(key=lambda elem: elem[1])
@@ -79,13 +78,22 @@ def cds_heuristics(flow_job_frame):
 
 def neh_heuristics(flow_job_frame):
     """
+    Compute solution for Tailard's instance by NEH heuristic
+
+    Parameters
+    ----------
+    flow_job_frame: JobSchedulingFrame
+
+    Returns
+    -------
+    heuristics_solution: list of job index
+
+    Notes
+    -----
     Journal Paper:
         Nawaz,M., Enscore,Jr.E.E, and Ham,I. (1983) A Heuristics Algorithm for
         the m Machine, n Job Flowshop Sequencing Problem.
         Omega-International Journal of Management Science 11(1), 91-95
-
-    :param flow_job_frame: JobSchedulingFrame
-    :return heuristics_solution: list of job index
     """
     count_jobs = flow_job_frame.count_jobs
     count_machines = flow_job_frame.count_machines
@@ -107,14 +115,14 @@ def neh_heuristics(flow_job_frame):
             neh_solution.insert(i, init_jobs[j])
             if min_end_time == -1:
                 min_end_time = create_schedule(
+                    flow_job_frame,
                     neh_solution,
-                    flow_job_frame.processing_times
                 ).end_time
                 best_insert_place = i
             else:
                 end_time = create_schedule(
+                    flow_job_frame,
                     neh_solution,
-                    flow_job_frame.processing_times
                 ).end_time
                 if min_end_time > end_time:
                     min_end_time = end_time

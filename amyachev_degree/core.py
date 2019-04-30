@@ -3,6 +3,9 @@ import random as rd
 from collections import namedtuple
 
 
+Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
+
+
 class Jobs:
     def __init__(self, count_job):
         self.count_jobs = count_job
@@ -54,6 +57,15 @@ class Schedule(object):
     def jobs(self):
         return self.jobs_duration_times.keys()
 
+    def __str__(self):
+        string = ""
+        for idx_job, list_durat in self.jobs_duration_times.items():
+            string += "%s: " % idx_job
+            for durat in list_durat:
+                string += "(%s, %s), " % (durat.begin_time, durat.end_time)
+            string += "\n"
+        return string
+
     @property
     def end_time(self):
         return self._end_time
@@ -89,8 +101,21 @@ class JobSchedulingFrame:
     def schedule_ready(self):
         return self.jobs.all_ready()
 
-    def get_processing_time(self, job, machine):
-        return self.processing_times[job][machine]
+    def get_processing_time(self, idx_job, idx_machine):
+        """
+        Return processing time `idx_job` on `idx_macine`
+
+        Parameters
+        ----------
+        idx_job: int
+        idx_machine: int
+
+        Returns
+        -------
+        processing_time: int
+
+        """
+        return self.processing_times[idx_job][idx_machine]
 
     def set_processing_times(self, processing_times):
         self.processing_times = processing_times
@@ -142,31 +167,48 @@ processing times :
                                    self.initial_seed, proc_times)
 
 
-def create_schedule(jobs_sequence, processing_time):
-    Duration = namedtuple('Duration', ['machine_index',
-                                       'begin_time',
-                                       'end_time'])
-    schedule = {job: [] for job in jobs_sequence}
-    machines_time = [0 for _ in range(len(processing_time[0]))]
+def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
+                    count_job=None, count_machine=None):
+    """
+    Create schedule for job sequence using information from `flow_job_frame`
 
-    for job in jobs_sequence:
+    Parameters
+    ----------
+    flow_job_frame: JobSchedulingFrame
+    jobs_sequence: sequence of jobs indexes
+    count_job: int, default None
+        count job from `jobs_sequence`, for that will be create schedule
+    count_machine: int, default None
+        count machines, for that will be create schedule
+
+    Returns
+    -------
+    schedule: Schedule
+    """
+    if count_job is None:
+        count_job = len(jobs_sequence)
+        count_machine = flow_job_frame.count_machines
+
+    schedule = {job: [] for job in jobs_sequence[:count_job]}
+    machines_time = [0 for _ in range(count_machine)]
+
+    for job in jobs_sequence[:count_job]:
         begin_time = machines_time[0]
-        end_time = begin_time + processing_time[job][0]
+        end_time = begin_time + flow_job_frame.get_processing_time(job, 0)
         schedule[job].append(Duration(0, begin_time, end_time))
         machines_time[0] = end_time
-        for machine_index in range(1, len(processing_time[0])):
-            job_time = processing_time[job][machine_index]
+        for machine_index in range(1, count_machine):
+            job_time = flow_job_frame.get_processing_time(job, machine_index)
             machine_release_time = machines_time[machine_index]
             prev_machine_release_time = machines_time[machine_index - 1]
 
             if machine_release_time >= prev_machine_release_time:
                 begin_time = machine_release_time
-                end_time = begin_time + job_time
-                machines_time[machine_index] = end_time
             else:
                 begin_time = prev_machine_release_time
-                end_time = begin_time + job_time
-                machines_time[machine_index] = end_time
+
+            end_time = begin_time + job_time
+            machines_time[machine_index] = end_time
             schedule[job].append(Duration(machine_index, begin_time, end_time))
 
     return Schedule(schedule, machines_time[len(machines_time) - 1])
