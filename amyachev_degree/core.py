@@ -73,6 +73,21 @@ class Schedule(object):
     def process_times(self, job):
         return self.jobs_duration_times[job]
 
+    def completion_time(self, machine: int, job: int) -> int:
+        """
+        Parameters
+        ----------
+        machine: int
+            machine index
+        job: int
+            job index
+
+        Returns
+        -------
+        the completion time of `job` on `machine`: int
+        """
+        return self.jobs_duration_times[job][machine].end_time
+
 
 class JobSchedulingFrame:
     def __init__(self, jobs_cl, machines_cl,
@@ -103,7 +118,7 @@ class JobSchedulingFrame:
 
     def get_processing_time(self, idx_job, idx_machine):
         """
-        Return processing time `idx_job` on `idx_macine`
+        Return processing time `idx_job` on `idx_machine`
 
         Parameters
         ----------
@@ -168,7 +183,7 @@ processing times :
 
 
 def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
-                    count_job=None, count_machine=None):
+                    count_job=None, count_machine=None) -> Schedule:
     """
     Create schedule for job sequence using information from `flow_job_frame`
 

@@ -1,4 +1,5 @@
-from amyachev_degree.core import Machines, JobSchedulingFrame, create_schedule
+from amyachev_degree.core import (Machines, JobSchedulingFrame,
+                                  create_schedule, Jobs)
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
@@ -78,7 +79,7 @@ def cds_heuristics(flow_job_frame):
 
 def neh_heuristics(flow_job_frame):
     """
-    Compute solution for Tailard's instance by NEH heuristic
+    Compute solution for Tailard's instance by NEH heuristic.
 
     Parameters
     ----------
@@ -131,3 +132,93 @@ def neh_heuristics(flow_job_frame):
         neh_solution.insert(best_insert_place, init_jobs[j])
 
     return neh_solution
+
+
+def weighted_idle_time(frame: JobSchedulingFrame,
+                       jobs: list, next_job: int) -> float:
+    # TODO make sure that `jobs` does not change
+    # during the operation of the function
+    sch = create_schedule(frame, jobs.append(next_job))
+    idle_time = 0.
+    idx_second_last_job = jobs[-2]
+    idx_last_job = jobs[-1]
+    for idx_machine in range(1, frame.count_machines):
+        cmpl_time1 = sch.completion_time(idx_machine - 1, idx_last_job)
+        cmpl_time2 = sch.completion_time(idx_machine, idx_second_last_job)
+        numerator = frame.count_machines * max(cmpl_time1 - cmpl_time2, 0)
+        denominator = idx_machine + (len(jobs) - 1) * \
+            (frame.count_machines - idx_machine) / (frame.count_jobs - 2)
+        idle_time += numerator / denominator
+
+    jobs.pop()  # remove this; see TODO
+    return idle_time
+
+
+def artificial_time(frame: JobSchedulingFrame,
+                    jobs: list, unscheduled_jobs: list) -> int:
+    #  copy processing time matrix jobs x machines from frame
+    processing_times = []
+    for idx_job in range(frame.count_jobs):
+        processing_times.append(
+            [frame.get_processing_time(idx_job, idx_machine)
+             for idx_machine in range(frame.count_machines)]
+        )
+    #  creating processing times for artificial job as average of
+    #  the processing times of jobs from `unscheduled_jobs`
+    artificial_prc_times = []
+    for idx_machine in range(frame.count_machines):
+        average_time = 0.
+        for idx_job in range(unscheduled_jobs):
+            average_time += frame.get_processing_time(idx_job, idx_machine)
+        average_time /= len(unscheduled_jobs)
+        artificial_prc_times.append(average_time)
+    processing_times.append(artificial_prc_times)
+    frame_with_artificial_job = JobSchedulingFrame(
+        Jobs(len(jobs) + 1),
+        Machines(frame.count_machines),
+        processing_times
+    )
+    jobs.append(len(frame.count_jobs) - 1)  # added index of artificial job
+    sch = create_schedule(frame_with_artificial_job, jobs)
+
+    idx_second_last_job = jobs[-2]
+    idx_last_job = jobs[-1]
+
+    result_time = sch.completion_time(len(frame.count_machines) - 1,
+                                      idx_second_last_job) + \
+        sch.completion_time(len(frame.count_machines) - 1,
+                            idx_last_job)
+    jobs.pop()
+    result_time
+
+
+def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
+    def index_function(frame: JobSchedulingFrame,
+                       jobs: list,
+                       unscheduled_jobs: list,
+                       next_job: int):
+        return (frame.count_jobs - len(jobs) - 2) * \
+            weighted_idle_time(frame, jobs, next_job) + \
+            artificial_time(frame, jobs, unscheduled_jobs)
+
+    init_sequence = [idx_job for idx_job in range(frame.count_jobs)]
+    from copy import copy
+    unscheduled_jobs = copy(init_sequence)
+    init_sequence.sort(lambda next_job: index_function(frame, [],
+                                                       unscheduled_jobs,
+                                                       next_job))
+
+    solutions = []
+    for idx in range(count_sequences):
+        solution = [init_sequence[idx]]
+        unscheduled_jobs.remove(init_sequence[idx])
+        for jdx in range(frame.count_jobs):
+            min_job = min(unscheduled_jobs,
+                          key=lambda next_job: index_function(frame, solution,
+                                                              unscheduled_jobs,
+                                                              next_job))
+            solution.append(min_job)
+            unscheduled_jobs.remove(min_job)
+        solutions.append(solution)
+    return solutions.sort(lambda solution:
+                          create_schedule(frame, solution).end_time)[0]
