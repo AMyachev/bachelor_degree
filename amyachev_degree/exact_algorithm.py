@@ -1,27 +1,39 @@
-def johnson_algorithm(_johnson_scheduling_frame):
+from amyachev_degree.core import JobSchedulingFrame
+
+
+def johnson_algorithm(frame: JobSchedulingFrame) -> list:
     """
-    case of two machines of flow shop problem
-    :param _johnson_scheduling_frame: JobSchedulingFrame
-    :return: exact_solution: list of job index
+    Compute solution for case of 2 machines of flow shop problem
+    by Johnson's algorithm.
+
+    Parameters
+    ----------
+    frame: JobSchedulingFrame
+        frame with exactly 2 machines
+
+    Returns
+    -------
+    exact_solution: list
+        list of job index
     """
-    if _johnson_scheduling_frame.count_machines != 2:
+    if frame.count_machines != 2:
         raise ValueError
 
     # init job indexes
-    exact_solution = [i for i in range(_johnson_scheduling_frame.count_jobs)]
+    exact_solution = [i for i in range(frame.count_jobs)]
 
     exact_solution.sort(
         key=lambda job_index: min(
-            _johnson_scheduling_frame.get_processing_time(job_index, 0),
-            _johnson_scheduling_frame.get_processing_time(job_index, 1)
+            frame.get_processing_time(job_index, 0),
+            frame.get_processing_time(job_index, 1)
         )
     )
 
     first_machine_jobs = []
     second_machine_jobs = []
     for job_index in exact_solution:
-        frst = _johnson_scheduling_frame.get_processing_time(job_index, 0)
-        scnd = _johnson_scheduling_frame.get_processing_time(job_index, 1)
+        frst = frame.get_processing_time(job_index, 0)
+        scnd = frame.get_processing_time(job_index, 1)
         if frst < scnd:
             first_machine_jobs.append(job_index)
         else:
