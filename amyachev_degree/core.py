@@ -16,6 +16,7 @@ class Jobs:
         for i in range(count_job):
             self.job_current_state.append(-1)
 
+############################################################################
     def list_ready(self, current_time):
         output = []
         for i in range(self.count_jobs):
@@ -28,6 +29,7 @@ class Jobs:
             if self.job_release_time[i] != -1:
                 return False
         return True
+############################################################################
 
 
 class Machines:
