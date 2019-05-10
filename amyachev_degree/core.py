@@ -112,12 +112,15 @@ class Schedule(object):
 class JobSchedulingFrame:
     def __init__(self, jobs_cl, machines_cl,
                  processing_time, processing_order=None,
-                 upper_bound_makespan=None, initial_seed="NaN"):
+                 upper_bound_makespan=None, initial_seed=NaN):
         self.jobs = jobs_cl
         self.machines = machines_cl
         self.processing_times = processing_time
         self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
+
+        if not initial_seed == NaN and not isinstance(initial_seed, int):
+            raise ValueError('initial_seed must be the NaN or int')
         self.init_seed = initial_seed
 
     @property
@@ -249,8 +252,8 @@ def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
     return Schedule(schedule, machines_time[len(machines_time) - 1])
 
 
-def flow_job_generator(count_jobs, count_machines, initial_seed=None):
-    if initial_seed is not None:
+def flow_job_generator(count_jobs, count_machines, initial_seed=NaN):
+    if initial_seed is not NaN:
         rd.seed(initial_seed)
     else:
         initial_seed = time.time()
@@ -267,8 +270,8 @@ def flow_job_generator(count_jobs, count_machines, initial_seed=None):
                               processing_time, initial_seed=initial_seed)
 
 
-def johnson_three_machines_generator(count_jobs, initial_seed=None):
-    if initial_seed is not None:
+def johnson_three_machines_generator(count_jobs, initial_seed=NaN):
+    if initial_seed is not NaN:
         rd.seed(initial_seed)
     else:
         initial_seed = int(time.time())
