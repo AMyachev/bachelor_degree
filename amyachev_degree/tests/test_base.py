@@ -35,3 +35,11 @@ class TestJobSchedulingFrame:
         frame = JobSchedulingFrame(Jobs(1), Machines(2), [[5, 5]],
                                    initial_seed=seed)
         assert seed == frame.initial_seed
+
+    @pytest.mark.parametrize('seed', [None, 12345.4, "NaN"])
+    def test_bad_initial_seed(self, seed):
+        msg = 'initial_seed must be the NaN or int'
+
+        with pytest.raises(ValueError, match=msg):
+            JobSchedulingFrame(Jobs(1), Machines(2), [[5, 5]],
+                               initial_seed=seed)
