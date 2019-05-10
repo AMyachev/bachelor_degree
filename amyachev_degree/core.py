@@ -6,6 +6,21 @@ from collections import namedtuple
 Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
 
 
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args,
+                                                                 **kwargs)
+        return cls._instances[cls]
+
+
+class NaN(metaclass=Singleton):
+    def __str__(self):
+        return "NaN"
+
+
 class Jobs:
     def __init__(self, count_job):
         self.count_jobs = count_job
