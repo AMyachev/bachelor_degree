@@ -35,6 +35,7 @@ class Jobs:
             self.job_current_state.append(-1)
 
 ############################################################################
+# not used now
     def list_ready(self, current_time):
         output = []
         for i in range(self.count_jobs):
@@ -110,11 +111,10 @@ class Schedule(object):
 
 
 class JobSchedulingFrame:
-    def __init__(self, jobs_cl, machines_cl,
-                 processing_time, processing_order=None,
+    def __init__(self, processing_time, processing_order=None,
                  upper_bound_makespan=None, initial_seed=NaN):
-        self.jobs = jobs_cl
-        self.machines = machines_cl
+        self.jobs = Jobs(len(processing_time))
+        self.machines = Machines(len(processing_time[0]))
         self.processing_times = processing_time
         self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
@@ -264,10 +264,11 @@ def flow_job_generator(count_jobs, count_machines, initial_seed=NaN):
         for i in range(count_machines):
             machine_time.append(rd.randint(1, 99))
         processing_time.append(machine_time)
-    jobs = Jobs(count_jobs)
-    machines = Machines(count_machines)
-    return JobSchedulingFrame(jobs, machines,
-                              processing_time, initial_seed=initial_seed)
+
+    assert count_jobs == len(processing_time)
+    assert count_machines == len(processing_time[0])
+
+    return JobSchedulingFrame(processing_time, initial_seed=initial_seed)
 
 
 def johnson_three_machines_generator(count_jobs, initial_seed=NaN):
@@ -284,7 +285,8 @@ def johnson_three_machines_generator(count_jobs, initial_seed=NaN):
             max_calue = 99 + 100 * (i * i)
             machine_time.append(rd.randint(min_value, max_calue))
         processing_time.append(machine_time)
-    jobs = Jobs(count_jobs)
-    machines = Machines(3)
-    return JobSchedulingFrame(jobs, machines,
-                              processing_time, initial_seed=initial_seed)
+
+    assert count_jobs == len(processing_time)
+    assert 3 == len(processing_time[0])
+
+    return JobSchedulingFrame(processing_time, initial_seed=initial_seed)

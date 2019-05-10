@@ -1,5 +1,4 @@
-from amyachev_degree.core import (Machines, JobSchedulingFrame,
-                                  create_schedule, Jobs)
+from amyachev_degree.core import (JobSchedulingFrame, create_schedule)
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
@@ -61,7 +60,7 @@ def cds_heuristics(flow_job_frame):
             processing_times.append(sum_times)
         return processing_times
 
-    frame = JobSchedulingFrame(flow_job_frame.jobs, Machines(2), [])
+    frame = JobSchedulingFrame([])
 
     johnson_solutions_with_end_time = []
     for sub_problem in range(1, flow_job_frame.count_machines):
@@ -173,11 +172,11 @@ def artificial_time(frame: JobSchedulingFrame,
         average_time /= len(unscheduled_jobs)
         artificial_prc_times.append(average_time)
     processing_times.append(artificial_prc_times)
-    frame_with_artificial_job = JobSchedulingFrame(
-        Jobs(len(jobs) + 1),
-        Machines(frame.count_machines),
-        processing_times
-    )
+
+    assert frame.count_jobs + 1 == len(processing_times)
+    assert frame.count_machines == len(processing_times[0])
+
+    frame_with_artificial_job = JobSchedulingFrame(processing_times)
     jobs.append(len(frame.count_jobs) - 1)  # added index of artificial job
     sch = create_schedule(frame_with_artificial_job, jobs)
 

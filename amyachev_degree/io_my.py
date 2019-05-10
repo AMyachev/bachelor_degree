@@ -6,6 +6,8 @@ import plotly.figure_factory as ff
 from amyachev_degree.core import Jobs, Machines, JobSchedulingFrame
 
 
+##############################################################################
+# not used now
 def read_file_with_open_shop(file_name):  # FIXME
     """
     for open shop use False
@@ -45,6 +47,7 @@ def read_file_with_open_shop(file_name):  # FIXME
 
     return JobSchedulingFrame(jobs_cl, machines_cl,
                               processing_time, processing_order, None)
+##############################################################################
 
 
 class FlowShopFormatError(Exception):
@@ -114,15 +117,14 @@ def read_flow_shop_instances(file_name):
                             raise FlowShopFormatError(file_name, counter_lines)
                         processing_time.append((int(time) for time in times))
 
-                    jobs_cl = Jobs(count_jobs)
-                    machines_cl = Machines(count_machines)
                     processing_time = list(zip(*processing_time))  # transpose
+
+                    assert count_jobs == len(processing_time)
+                    assert count_machines == len(processing_time[0])
+
                     frames.append(
-                        JobSchedulingFrame(
-                            jobs_cl, machines_cl,
-                            processing_time, None,
-                            upper_bound_makespan
-                        )
+                        JobSchedulingFrame(processing_time, None,
+                                           upper_bound_makespan)
                     )
                 else:
                     raise FlowShopFormatError(file_name, counter_lines)

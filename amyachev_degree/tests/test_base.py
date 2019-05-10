@@ -1,24 +1,24 @@
 import pytest
 
-from amyachev_degree.core import (create_schedule, Jobs,
-                                  Machines, JobSchedulingFrame, NaN)
+from amyachev_degree.core import (create_schedule,
+                                  JobSchedulingFrame, NaN)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
-frame1 = JobSchedulingFrame(Jobs(5), Machines(3), [[17, 19, 13], [15, 11, 12],
-                                                   [14, 21, 16], [20, 16, 20],
-                                                   [16, 17, 17]])
+frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
+                             [14, 21, 16], [20, 16, 20],
+                             [16, 17, 17]])
 test_1 = create_schedule(frame1, [2, 4, 3, 0, 1])
 assert test_1.end_time == 114
 test_2 = create_schedule(frame1, [4, 2, 3, 0, 1])
 assert test_2.end_time == 115
 
-frame2 = JobSchedulingFrame(Jobs(6), Machines(2), [[2, 3],
-                                                   [8, 3],
-                                                   [4, 6],
-                                                   [9, 5],
-                                                   [6, 8],
-                                                   [9, 7]])
+frame2 = JobSchedulingFrame([[2, 3],
+                             [8, 3],
+                             [4, 6],
+                             [9, 5],
+                             [6, 8],
+                             [9, 7]])
 solution1 = johnson_algorithm(frame2)
 assert solution1 == [0, 2, 4, 5, 3, 1]
 assert create_schedule(frame2, solution1).end_time == 41
@@ -32,8 +32,7 @@ class TestJobSchedulingFrame:
 
     @pytest.mark.parametrize('seed', [NaN, 12345])
     def test_initial_seed(self, seed):
-        frame = JobSchedulingFrame(Jobs(1), Machines(2), [[5, 5]],
-                                   initial_seed=seed)
+        frame = JobSchedulingFrame([[5, 5]], initial_seed=seed)
         assert seed == frame.initial_seed
 
     @pytest.mark.parametrize('seed', [None, 12345.4, "NaN"])
@@ -41,5 +40,16 @@ class TestJobSchedulingFrame:
         msg = 'initial_seed must be the NaN or int'
 
         with pytest.raises(ValueError, match=msg):
-            JobSchedulingFrame(Jobs(1), Machines(2), [[5, 5]],
-                               initial_seed=seed)
+            JobSchedulingFrame([[5, 5]], initial_seed=seed)
+
+    def test_count_jobs_and_machines(self):
+        processing_time = [[17, 19, 13], [15, 11, 12],
+                           [14, 21, 16], [20, 16, 20],
+                           [16, 17, 17]]
+        frame = JobSchedulingFrame(processing_time)
+
+        count_jobs = len(processing_time)
+        count_machines = len(processing_time[0])
+
+        assert frame.count_jobs == count_jobs
+        assert frame.count_machines == count_machines
