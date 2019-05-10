@@ -16,9 +16,12 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class NaN(metaclass=Singleton):
+class _NaN(metaclass=Singleton):
     def __str__(self):
         return "NaN"
+
+
+NaN = _NaN()  # there is only one instance
 
 
 class Jobs:

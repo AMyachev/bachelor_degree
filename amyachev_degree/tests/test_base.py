@@ -25,16 +25,12 @@ assert create_schedule(frame2, solution1).end_time == 41
 
 
 def test_NaN():
-    fst_nan = NaN()
-    scnd_nan = NaN()
-
-    assert fst_nan == scnd_nan  # NaN is Singleton
-    assert "NaN" == str(fst_nan)
+    assert "NaN" == str(NaN)
 
 
 class TestJobSchedulingFrame:
 
-    @pytest.mark.parametrize('seed', ["NaN", 12345])
+    @pytest.mark.parametrize('seed', [NaN, 12345])
     def test_initial_seed(self, seed):
         frame = JobSchedulingFrame(Jobs(1), Machines(2), [[5, 5]],
                                    initial_seed=seed)
