@@ -111,28 +111,42 @@ class Schedule(object):
 
 
 class JobSchedulingFrame:
-    def __init__(self, processing_time, processing_order=None,
+    def __init__(self, processing_times, processing_order=None,
                  upper_bound_makespan=None, initial_seed=NaN):
         """
         Creates frame from matrix of processing times.
 
         Parameters
         ----------
-        processing_time: list of lists
+        processing_times: list of lists
         processing_order: list of lists or None
             used for open job problems
         upper_bound_makespan: int or None
         initial_seed: int or NaN
         """
-        self.jobs = Jobs(len(processing_time))
-        self.machines = Machines(len(processing_time[0]))
-        self.processing_times = processing_time
+        # raise ValueError if wrong type
+        self._check_processing_times(processing_times)
+
+        self.processing_times = processing_times
         self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
 
         if not initial_seed == NaN and not isinstance(initial_seed, int):
             raise ValueError('initial_seed must be the NaN or int')
         self.init_seed = initial_seed
+
+        self.jobs = Jobs(len(processing_times))
+        self.machines = Machines(len(processing_times[0]))
+
+    def _check_processing_times(self, proc_times):
+        try:
+            length = len(proc_times[0])  # must be the same for all jobs
+            for job_proc_times in proc_times:
+                if length != len(job_proc_times):
+                    raise
+        except Exception:
+            raise ValueError('processing_times must be '
+                             'list of lists of integers; same length')
 
     @property
     def initial_seed(self):
@@ -152,7 +166,7 @@ class JobSchedulingFrame:
 
     def get_processing_time(self, idx_job, idx_machine):
         """
-        Return processing time `idx_job` on `idx_machine`
+        Returns processing time `idx_job` on `idx_machine`.
 
         Parameters
         ----------
