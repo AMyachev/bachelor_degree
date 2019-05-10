@@ -113,6 +113,17 @@ class Schedule(object):
 class JobSchedulingFrame:
     def __init__(self, processing_time, processing_order=None,
                  upper_bound_makespan=None, initial_seed=NaN):
+        """
+        Creates frame from matrix of processing times.
+
+        Parameters
+        ----------
+        processing_time: list of lists
+        processing_order: list of lists or None
+            used for open job problems
+        upper_bound_makespan: int or None
+        initial_seed: int or NaN
+        """
         self.jobs = Jobs(len(processing_time))
         self.machines = Machines(len(processing_time[0]))
         self.processing_times = processing_time
