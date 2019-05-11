@@ -45,17 +45,46 @@ class Machines:
 
 
 class Schedule(object):
-    def __init__(self, jobs_duration_times, end_time):
-        self.jobs_duration_times = jobs_duration_times
+
+    def __init__(self, jobs_duration_times: dict, end_time: int):
+        """
+        Create Schedule instance.
+
+        Parameters
+        ----------
+        jobs_duration_times: dict
+            keys - jobs indexes; value - list of Duration objects
+        end_time: int
+        """
+        self._jobs_duration_times = jobs_duration_times
         self._end_time = end_time
 
     @property
-    def jobs(self):
-        return self.jobs_duration_times.keys()
+    def jobs(self) -> list:
+        """
+        Returns job indexes in Schedule.
 
-    def __str__(self):
+        Returns
+        -------
+        : list[int]
+        """
+        return self._jobs_duration_times.keys()
+
+    def __str__(self) -> str:
+        """
+        Example:
+            18: (0, 43), (43, 134), (134, 145), (145, 158), (158, 238),
+            13: (43, 83), (134, 141), (145, 158), (158, 181), (238, 247),
+            5: (83, 138), (141, 205), (205, 225), (225, 234), (247, 345),
+            19: (138, 188), (205, 242), (242, 247), (247, 345), (345, 417),
+            2: (188, 215), (242, 286), (286, 350), (350, 397), (417, 478),
+
+        Returns
+        -------
+        : str
+        """
         string = ""
-        for idx_job, list_durat in self.jobs_duration_times.items():
+        for idx_job, list_durat in self._jobs_duration_times.items():
             string += "%s: " % idx_job
             for durat in list_durat:
                 string += "(%s, %s), " % (durat.begin_time, durat.end_time)
@@ -63,14 +92,34 @@ class Schedule(object):
         return string
 
     @property
-    def end_time(self):
+    def end_time(self) -> int:
+        """
+        Returns time of completion of all jobs.
+
+        Returns
+        -------
+        : int
+        """
         return self._end_time
 
-    def process_times(self, job):
-        return self.jobs_duration_times[job]
+    def process_times(self, idx_job: int) -> list:
+        """
+        Returns list of processing times of `idx_job` on all machines.
+
+        Parameters
+        ----------
+        idx_job: int
+
+        Returns
+        -------
+        : list
+        """
+        return self._jobs_duration_times[idx_job]
 
     def completion_time(self, machine: int, job: int) -> int:
         """
+        Returns the completion time of `job` on `machine`.
+
         Parameters
         ----------
         machine: int
@@ -80,9 +129,9 @@ class Schedule(object):
 
         Returns
         -------
-        the completion time of `job` on `machine`: int
+        : int
         """
-        return self.jobs_duration_times[job][machine].end_time
+        return self._jobs_duration_times[job][machine].end_time
 
 
 class JobSchedulingFrame:
