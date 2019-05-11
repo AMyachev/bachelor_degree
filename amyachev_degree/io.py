@@ -59,7 +59,7 @@ def read_flow_shop_instances(file_name):
                 if len(params) != 4:
                     raise FlowShopFormatError(file_name, counter_lines)
                 count_jobs, count_machines, \
-                    _, upper_bound_makespan = (int(param) for param in params)
+                    _, upper_bound = (int(param) for param in params)
 
                 string = next(file)
                 counter_lines += 1
@@ -81,7 +81,7 @@ def read_flow_shop_instances(file_name):
                     frames.append(
                         JobSchedulingFrame(
                             processing_time,
-                            upper_bound_makespan=upper_bound_makespan
+                            upper_bound=upper_bound
                         )
                     )
                 else:

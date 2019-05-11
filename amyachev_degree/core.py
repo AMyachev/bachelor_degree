@@ -87,8 +87,7 @@ class Schedule(object):
 
 class JobSchedulingFrame:
 
-    def __init__(self, processing_times, upper_bound_makespan=NaN,
-                 initial_seed=NaN):
+    def __init__(self, processing_times, upper_bound=NaN, initial_seed=NaN):
         """
         Creates frame from matrix of processing times.
 
@@ -96,15 +95,14 @@ class JobSchedulingFrame:
         ----------
         processing_times: list of lists of integers
             can be empty
-        upper_bound_makespan: int or NaN
+        upper_bound: int or NaN
         initial_seed: int or NaN
         """
         self.set_processing_times(processing_times)
 
-        if not upper_bound_makespan == NaN and \
-                not isinstance(upper_bound_makespan, int):
-            raise ValueError('upper_bound_makespan must be the NaN or int')
-        self.upper_bound_makespan = upper_bound_makespan
+        if not upper_bound == NaN and not isinstance(upper_bound, int):
+            raise ValueError('upper_bound must be the NaN or int')
+        self.upper_bound = upper_bound
 
         if not initial_seed == NaN and not isinstance(initial_seed, int):
             raise ValueError('initial_seed must be the NaN or int')
