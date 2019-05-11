@@ -164,7 +164,7 @@ class JobSchedulingFrame:
     def __str__(self):
         taillard_pattern = """number of jobs, number of machines,\
 initial seed, upper bound and lower bound :
-          %s           %s   %s        NaN        NaN
+          %s           %s   %s        %s        NaN
 processing times :
 %s
 """
@@ -177,7 +177,8 @@ processing times :
                               for idx, time in enumerate(times)])
 
         return taillard_pattern % (self.count_jobs, self.count_machines,
-                                   self.initial_seed, proc_times)
+                                   self.initial_seed, self.upper_bound,
+                                   proc_times)
 
 
 def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
