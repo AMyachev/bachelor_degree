@@ -123,8 +123,10 @@ def read_flow_shop_instances(file_name):
                     assert count_machines == len(processing_time[0])
 
                     frames.append(
-                        JobSchedulingFrame(processing_time, None,
-                                           upper_bound_makespan)
+                        JobSchedulingFrame(
+                            processing_time,
+                            upper_bound_makespan=upper_bound_makespan
+                        )
                     )
                 else:
                     raise FlowShopFormatError(file_name, counter_lines)

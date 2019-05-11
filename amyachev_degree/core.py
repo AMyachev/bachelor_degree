@@ -111,24 +111,24 @@ class Schedule(object):
 
 
 class JobSchedulingFrame:
-    def __init__(self, processing_times, processing_order=None,
-                 upper_bound_makespan=None, initial_seed=NaN):
+
+    def __init__(self, processing_times, upper_bound_makespan=None,
+                 initial_seed=NaN,  processing_order=None):
         """
         Creates frame from matrix of processing times.
 
         Parameters
         ----------
-        processing_times: list of lists
-        processing_order: list of lists or None
-            used for open job problems
+        processing_times: list of lists of integers
         upper_bound_makespan: int or None
         initial_seed: int or NaN
+        processing_order: list of lists of integers or None
+            used for open job problems
         """
         # raise ValueError if wrong type
         self._check_processing_times(processing_times)
 
         self.processing_times = processing_times
-        self.processing_order = processing_order
         self.upper_bound_makespan = upper_bound_makespan
 
         if not initial_seed == NaN and not isinstance(initial_seed, int):
@@ -137,6 +137,8 @@ class JobSchedulingFrame:
 
         self.jobs = Jobs(len(processing_times))
         self.machines = Machines(len(processing_times[0]))
+
+        self.processing_order = processing_order
 
     def _check_processing_times(self, proc_times):
         try:
