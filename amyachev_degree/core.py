@@ -98,10 +98,7 @@ class JobSchedulingFrame:
         upper_bound_makespan: int or NaN
         initial_seed: int or NaN
         """
-        # raise ValueError if wrong type
-        self._check_processing_times(processing_times)
-
-        self.processing_times = processing_times
+        self.set_processing_times(processing_times)
 
         if not upper_bound_makespan == NaN and \
                 not isinstance(upper_bound_makespan, int):
@@ -111,9 +108,6 @@ class JobSchedulingFrame:
         if not initial_seed == NaN and not isinstance(initial_seed, int):
             raise ValueError('initial_seed must be the NaN or int')
         self.init_seed = initial_seed
-
-        self.jobs = Jobs(len(processing_times))
-        self.machines = Machines(len(processing_times[0]))
 
     def _check_processing_times(self, proc_times):
         try:
@@ -157,7 +151,12 @@ class JobSchedulingFrame:
             raise IndexError('idx_job or idx_machine out of range')
 
     def set_processing_times(self, processing_times):
+        # raise ValueError if wrong type
+        self._check_processing_times(processing_times)
+
         self.processing_times = processing_times
+        self.jobs = Jobs(len(processing_times))
+        self.machines = Machines(len(processing_times[0]))
 
     def __str__(self):
         taillard_pattern = """number of jobs, number of machines,\
