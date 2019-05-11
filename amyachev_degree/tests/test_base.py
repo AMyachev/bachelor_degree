@@ -1,7 +1,8 @@
 import pytest
 
 from amyachev_degree.core import (create_schedule, Jobs, Machines,
-                                  JobSchedulingFrame, NaN, Duration)
+                                  JobSchedulingFrame, NaN, Duration,
+                                  Schedule)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
 import amyachev_degree.tests.util_testing as tm
@@ -134,3 +135,26 @@ class TestJobSchedulingFrame:
                         "  13  12  16  20  17\n")
 
         assert taillard_str == str(JobSchedulingFrame(self.processing_times))
+
+
+class TestSchedule:
+
+    def setup_method(self):
+        self.schedule = {18: [(0, 0, 43), (1, 43, 134), (2, 134, 145)],
+                         13: [(0, 43, 83), (1, 134, 141), (2, 145, 158)],
+                         5: [(0, 83, 138), (1, 141, 205), (2, 205, 225)]}
+        for durations in self.schedule.values():
+            for idx, duration_tuple in enumerate(durations):
+                durations[idx] = Duration(*duration_tuple)
+
+    def test_end_time(self):
+        schedule = Schedule(self.schedule, 225)
+
+        assert 225 == schedule.end_time
+
+    @pytest.mark.parametrize('end_time', [None, NaN, "NaN", 123.09, []])
+    def test_bad_end_time(self, end_time):
+        msg = 'end_time must be a integer'
+
+        with pytest.raises(ValueError, match=msg):
+            Schedule(self.schedule, end_time)

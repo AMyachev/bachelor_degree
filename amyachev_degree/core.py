@@ -57,6 +57,9 @@ class Schedule(object):
         end_time: int
         """
         self._jobs_duration_times = jobs_duration_times
+
+        if not isinstance(end_time, int):
+            raise ValueError('end_time must be a integer')
         self._end_time = end_time
 
     @property
