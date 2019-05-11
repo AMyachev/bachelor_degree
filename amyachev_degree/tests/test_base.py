@@ -47,6 +47,20 @@ class TestJobSchedulingFrame:
         with pytest.raises(ValueError, match=msg):
             JobSchedulingFrame(self.processing_times, initial_seed=seed)
 
+    @pytest.mark.parametrize('upper_bound', [NaN, 12345])
+    def test_upper_bound(self, upper_bound):
+        frame = JobSchedulingFrame(self.processing_times,
+                                   upper_bound_makespan=upper_bound)
+        assert upper_bound == frame.upper_bound_makespan
+
+    @pytest.mark.parametrize('upper_bound', [None, "NaN", 12345.4])
+    def test_bad_upper_bound(self, upper_bound):
+        msg = 'upper_bound_makespan must be the NaN or int'
+
+        with pytest.raises(ValueError, match=msg):
+            JobSchedulingFrame(self.processing_times,
+                               upper_bound_makespan=upper_bound)
+
     def test_count_jobs_and_machines(self):
         frame = JobSchedulingFrame(self.processing_times)
 
