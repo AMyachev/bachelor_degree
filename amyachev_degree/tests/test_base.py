@@ -30,9 +30,14 @@ def test_NaN():
 
 class TestJobSchedulingFrame:
 
+    def setup_method(self):
+        self.processing_times = [[17, 19, 13], [15, 11, 12],
+                                 [14, 21, 16], [20, 16, 20],
+                                 [16, 17, 17]]
+
     @pytest.mark.parametrize('seed', [NaN, 12345])
     def test_initial_seed(self, seed):
-        frame = JobSchedulingFrame([[5, 5]], initial_seed=seed)
+        frame = JobSchedulingFrame(self.processing_times, initial_seed=seed)
         assert seed == frame.initial_seed
 
     @pytest.mark.parametrize('seed', [None, "NaN", 12345.4])
@@ -40,16 +45,13 @@ class TestJobSchedulingFrame:
         msg = 'initial_seed must be the NaN or int'
 
         with pytest.raises(ValueError, match=msg):
-            JobSchedulingFrame([[5, 5]], initial_seed=seed)
+            JobSchedulingFrame(self.processing_times, initial_seed=seed)
 
     def test_count_jobs_and_machines(self):
-        processing_times = [[17, 19, 13], [15, 11, 12],
-                            [14, 21, 16], [20, 16, 20],
-                            [16, 17, 17]]
-        frame = JobSchedulingFrame(processing_times)
+        frame = JobSchedulingFrame(self.processing_times)
 
-        count_jobs = len(processing_times)
-        count_machines = len(processing_times[0])
+        count_jobs = len(self.processing_times)
+        count_machines = len(self.processing_times[0])
 
         assert frame.count_jobs == count_jobs
         assert frame.count_machines == count_machines
@@ -65,10 +67,9 @@ class TestJobSchedulingFrame:
     @pytest.mark.parametrize('idx_job', [0, 1, 2, 3, 4])
     @pytest.mark.parametrize('idx_machine', [0, 1, 2])
     def test_get_processing_time(self, idx_job, idx_machine):
-        processing_times = [[17, 19, 13], [15, 11, 12],
-                            [14, 21, 16], [20, 16, 20],
-                            [16, 17, 17]]
-        frame = JobSchedulingFrame(processing_times)
-        fst_time = processing_times[idx_job][idx_machine]
+        frame = JobSchedulingFrame(self.processing_times)
+
+        fst_time = self.processing_times[idx_job][idx_machine]
         scnd_time = frame.get_processing_time(idx_job, idx_machine)
+
         assert fst_time == scnd_time
