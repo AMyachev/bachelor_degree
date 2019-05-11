@@ -162,10 +162,6 @@ class JobSchedulingFrame:
     def count_machines(self):
         return self.machines.count_machines
 
-    @property
-    def schedule_ready(self):
-        return self.jobs.all_ready()
-
     def get_processing_time(self, idx_job, idx_machine):
         """
         Returns processing time `idx_job` on `idx_machine`.
@@ -184,34 +180,6 @@ class JobSchedulingFrame:
 
     def set_processing_times(self, processing_times):
         self.processing_times = processing_times
-
-    def ready_jobs(self, current_time):
-        return self.jobs.list_ready(current_time)
-
-    def ready_machines(self, current_time):
-        return self.machines.list_ready(current_time)
-
-    def work_on_machine(self, job, machine, _current_time):
-        busy_time = self.processing_times[job][machine]
-        self.jobs.job_release_time[job] = _current_time + busy_time
-        self.machines.take_machine_time(machine, _current_time, busy_time)
-        self.jobs.job_current_state[job] += 1
-
-    def next_ready_machine(self, job):
-        if self.processing_order:
-            try:
-                next_state = self.jobs.job_current_state[job] + 1
-                return self.processing_order[job][next_state] - 1
-            except IndexError:
-                self.jobs.job_release_time[job] = -1
-                return None
-        else:
-            state = self.jobs.job_current_state[job] + 1
-            if state < self.machines.count_machines:
-                return state
-            else:
-                self.jobs.job_release_time[job] = -1
-                return None
 
     def __str__(self):
         taillard_pattern = """number of jobs, number of machines,\
