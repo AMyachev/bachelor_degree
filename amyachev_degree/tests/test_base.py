@@ -4,6 +4,7 @@ from amyachev_degree.core import (create_schedule,
                                   JobSchedulingFrame, NaN)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
+import amyachev_degree.tests.util_testing as tm
 
 frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
                              [14, 21, 16], [20, 16, 20],
@@ -95,3 +96,11 @@ class TestJobSchedulingFrame:
 
         with pytest.raises(IndexError, match=msg):
             frame.get_processing_time(idx_job, idx_machine)
+
+    def test_set_processing_times(self):
+        frame = JobSchedulingFrame([[]])
+        frame.set_processing_times(self.processing_times)
+
+        expected_frame = JobSchedulingFrame(self.processing_times)
+
+        tm.assert_js_frame(frame, expected_frame)

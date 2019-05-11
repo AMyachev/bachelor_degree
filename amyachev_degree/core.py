@@ -95,6 +95,7 @@ class JobSchedulingFrame:
         Parameters
         ----------
         processing_times: list of lists of integers
+            can be empty
         upper_bound_makespan: int or NaN
         initial_seed: int or NaN
         """

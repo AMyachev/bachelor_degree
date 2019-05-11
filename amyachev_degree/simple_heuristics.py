@@ -60,7 +60,7 @@ def cds_heuristics(flow_job_frame):
             processing_times.append(sum_times)
         return processing_times
 
-    frame = JobSchedulingFrame([])
+    frame = JobSchedulingFrame([[]])
 
     johnson_solutions_with_end_time = []
     for sub_problem in range(1, flow_job_frame.count_machines):
