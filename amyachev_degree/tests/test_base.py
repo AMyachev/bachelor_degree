@@ -1,7 +1,7 @@
 import pytest
 
 from amyachev_degree.core import (create_schedule, Jobs, Machines,
-                                  JobSchedulingFrame, NaN)
+                                  JobSchedulingFrame, NaN, Duration)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
 import amyachev_degree.tests.util_testing as tm
@@ -27,6 +27,13 @@ assert create_schedule(frame2, solution1).end_time == 41
 
 def test_NaN():
     assert "NaN" == str(NaN)
+
+
+def test_duration():
+    durat = Duration(machine_index=1, begin_time=0, end_time=10)
+    assert 1 == durat.machine_index
+    assert 0 == durat.begin_time
+    assert 10 == durat.end_time
 
 
 class TestJobs:
