@@ -162,12 +162,11 @@ class JobSchedulingFrame:
         self.machines = Machines(len(processing_times[0]))
 
     def __str__(self):
-        taillard_pattern = """number of jobs, number of machines,\
-initial seed, upper bound and lower bound :
-          %s           %s   %s        %s        NaN
-processing times :
-%s
-"""
+        taillard_pattern = ("number of jobs, number of machines, "
+                            "initial seed, upper bound and lower bound :\n"
+                            "          %s           %s"
+                            "   %s        %s        NaN\n"
+                            "processing times :\n%s")
         processing_times = list(zip(*self.processing_times))  # transpose
         format = " %3s"
         format_next_line = format + '\n'

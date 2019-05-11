@@ -105,13 +105,13 @@ class TestJobSchedulingFrame:
         tm.assert_js_frame(frame, expected_frame)
 
     def test_str(self):
-        taillard_str = """number of jobs, number of machines,\
-initial seed, upper bound and lower bound :
-          5           3   NaN        NaN        NaN
-processing times :
-  17  15  14  20  16
-  19  11  21  16  17
-  13  12  16  20  17
+        taillard_str = ("number of jobs, number of machines, "
+                        "initial seed, upper bound and lower bound :\n"
+                        "          5           3"
+                        "   NaN        NaN        NaN\n"
+                        "processing times :\n"
+                        "  17  15  14  20  16\n"
+                        "  19  11  21  16  17\n"
+                        "  13  12  16  20  17\n")
 
-"""
         assert taillard_str == str(JobSchedulingFrame(self.processing_times))
