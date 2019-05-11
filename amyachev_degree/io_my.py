@@ -3,51 +3,7 @@ import time
 import plotly
 import plotly.figure_factory as ff
 
-from amyachev_degree.core import Jobs, Machines, JobSchedulingFrame
-
-
-##############################################################################
-# not used now
-def read_file_with_open_shop(file_name):  # FIXME
-    """
-    for open shop use False
-    count_job, count_machine, \
-    processing_time, processing_order = read_file('D:/pipeline_task.txt',True)
-    processing_time = list(zip(*processing_time)) # and comment this
-    :param file_name:
-    :return:
-    """
-    f = open(file_name)
-    count_jobs, count_machines = 0, 0
-    processing_time, processing_order = [], []
-
-    for string in iter(f):
-        if string.startswith('number'):
-            string = next(f)
-            count_jobs, count_machines = [int(count)
-                                          for count in re.findall(r'\d+',
-                                                                  string)[:2]]
-        if string.startswith('processing'):
-            for _ in range(count_jobs):
-                string = next(f)
-                processing_time.append([int(number)
-                                        for number in re.findall(r'\d+',
-                                                                 string)])
-        if string.startswith('machines'):
-            for _ in range(count_jobs):
-                string = next(f)
-                processing_order.append([int(number)
-                                        for number in re.findall(r'\d+',
-                                                                 string)])
-    if not processing_order:
-        processing_order = None
-    f.close()
-    jobs_cl = Jobs(count_jobs)
-    machines_cl = Machines(count_machines)
-
-    return JobSchedulingFrame(jobs_cl, machines_cl,
-                              processing_time, processing_order, None)
-##############################################################################
+from amyachev_degree.core import JobSchedulingFrame
 
 
 class FlowShopFormatError(Exception):
