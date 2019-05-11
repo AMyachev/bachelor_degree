@@ -25,8 +25,13 @@ NaN = _NaN()  # there is only one instance
 
 
 class Jobs:
+
     def __init__(self, count_job):
-        self.count_jobs = count_job
+        self._count_jobs = count_job
+
+    @property
+    def count_jobs(self):
+        return self._count_jobs
 
 
 class Machines:
