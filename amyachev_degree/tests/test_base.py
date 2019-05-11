@@ -1,6 +1,6 @@
 import pytest
 
-from amyachev_degree.core import (create_schedule, Jobs,
+from amyachev_degree.core import (create_schedule, Jobs, Machines,
                                   JobSchedulingFrame, NaN)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
@@ -33,6 +33,12 @@ class TestJobs:
 
     def test_count_jobs(self):
         assert 5 == Jobs(5).count_jobs
+
+
+class TestMachines:
+
+    def test_count_machines(self):
+        assert 3 == Machines(3).count_machines
 
 
 class TestJobSchedulingFrame:
