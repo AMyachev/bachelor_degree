@@ -35,21 +35,9 @@ class Jobs:
 
 
 class Machines:
+
     def __init__(self, count_machines):
         self.count_machines = count_machines
-        self.release_time = []
-        for i in range(count_machines):
-            self.release_time.append(0)
-
-    def take_machine_time(self, machine, current_time, busy_time):
-        self.release_time[machine] = current_time + busy_time
-
-    def list_ready(self, current_time):
-        output = []
-        for i in range(self.count_machines):
-            if self.release_time[i] <= current_time:
-                output.append(i)
-        return output
 
 
 class Schedule(object):
