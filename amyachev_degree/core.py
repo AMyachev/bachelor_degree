@@ -102,11 +102,11 @@ class JobSchedulingFrame:
 
         if not upper_bound == NaN and not isinstance(upper_bound, int):
             raise ValueError('upper_bound must be the NaN or int')
-        self.upper_bound = upper_bound
+        self._upper_bound = upper_bound
 
         if not initial_seed == NaN and not isinstance(initial_seed, int):
             raise ValueError('initial_seed must be the NaN or int')
-        self.init_seed = initial_seed
+        self._initial_seed = initial_seed
 
     def _check_processing_times(self, proc_times):
         try:
@@ -120,7 +120,11 @@ class JobSchedulingFrame:
 
     @property
     def initial_seed(self):
-        return self.init_seed
+        return self._initial_seed
+
+    @property
+    def upper_bound(self):
+        return self._upper_bound
 
     @property
     def count_jobs(self):
