@@ -162,7 +162,7 @@ class JobSchedulingFrame:
     def __str__(self):
         taillard_pattern = """number of jobs, number of machines,\
 initial seed, upper bound and lower bound :
-          %s           %s   %s        Nan        Nan
+          %s           %s   %s        NaN        NaN
 processing times :
 %s
 """
