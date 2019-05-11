@@ -87,3 +87,11 @@ class TestJobSchedulingFrame:
         scnd_time = frame.get_processing_time(idx_job, idx_machine)
 
         assert fst_time == scnd_time
+
+    @pytest.mark.parametrize('idx_job, idx_machine', [(5, 1), (1, 5), (5, 3)])
+    def test_bad_get_processing_time(self, idx_job, idx_machine):
+        msg = 'idx_job or idx_machine out of range'
+        frame = JobSchedulingFrame(self.processing_times)
+
+        with pytest.raises(IndexError, match=msg):
+            frame.get_processing_time(idx_job, idx_machine)

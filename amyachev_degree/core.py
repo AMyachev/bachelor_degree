@@ -100,6 +100,7 @@ class JobSchedulingFrame:
         """
         # raise ValueError if wrong type
         self._check_processing_times(processing_times)
+
         self.processing_times = processing_times
 
         if not upper_bound_makespan == NaN and \
@@ -150,7 +151,10 @@ class JobSchedulingFrame:
         processing_time: int
 
         """
-        return self.processing_times[idx_job][idx_machine]
+        try:
+            return self.processing_times[idx_job][idx_machine]
+        except IndexError:
+            raise IndexError('idx_job or idx_machine out of range')
 
     def set_processing_times(self, processing_times):
         self.processing_times = processing_times
