@@ -37,7 +37,11 @@ class Jobs:
 class Machines:
 
     def __init__(self, count_machines):
-        self.count_machines = count_machines
+        self._count_machines = count_machines
+
+    @property
+    def count_machines(self):
+        return self._count_machines
 
 
 class Schedule(object):
