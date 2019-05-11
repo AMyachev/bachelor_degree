@@ -27,28 +27,6 @@ NaN = _NaN()  # there is only one instance
 class Jobs:
     def __init__(self, count_job):
         self.count_jobs = count_job
-        self.job_release_time = []
-        self.job_current_state = []
-        for i in range(count_job):
-            self.job_release_time.append(0)
-        for i in range(count_job):
-            self.job_current_state.append(-1)
-
-############################################################################
-# not used now
-    def list_ready(self, current_time):
-        output = []
-        for i in range(self.count_jobs):
-            if self.job_release_time[i] <= current_time:
-                output.append(i)
-        return output
-
-    def all_ready(self):
-        for i in range(self.count_jobs):
-            if self.job_release_time[i] != -1:
-                return False
-        return True
-############################################################################
 
 
 class Machines:
