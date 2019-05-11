@@ -61,3 +61,14 @@ class TestJobSchedulingFrame:
 
         with pytest.raises(ValueError, match=msg):
             JobSchedulingFrame(processing_times)
+
+    @pytest.mark.parametrize('idx_job', [0, 1, 2, 3, 4])
+    @pytest.mark.parametrize('idx_machine', [0, 1, 2])
+    def test_get_processing_time(self, idx_job, idx_machine):
+        processing_times = [[17, 19, 13], [15, 11, 12],
+                            [14, 21, 16], [20, 16, 20],
+                            [16, 17, 17]]
+        frame = JobSchedulingFrame(processing_times)
+        fst_time = processing_times[idx_job][idx_machine]
+        scnd_time = frame.get_processing_time(idx_job, idx_machine)
+        assert fst_time == scnd_time
