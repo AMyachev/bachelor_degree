@@ -143,14 +143,16 @@ class TestSchedule:
         self.schedule = {18: [(0, 0, 43), (1, 43, 134), (2, 134, 145)],
                          13: [(0, 43, 83), (1, 134, 141), (2, 145, 158)],
                          5: [(0, 83, 138), (1, 141, 205), (2, 205, 225)]}
+        self.end_time = 225
+
         for durations in self.schedule.values():
             for idx, duration_tuple in enumerate(durations):
                 durations[idx] = Duration(*duration_tuple)
 
     def test_end_time(self):
-        schedule = Schedule(self.schedule, 225)
+        schedule = Schedule(self.schedule, self.end_time)
 
-        assert 225 == schedule.end_time
+        assert self.end_time == schedule.end_time
 
     @pytest.mark.parametrize('end_time', [None, NaN, "NaN", 123.09, []])
     def test_bad_end_time(self, end_time):
@@ -164,4 +166,15 @@ class TestSchedule:
                         "13: (43, 83), (134, 141), (145, 158),\n"
                         "5: (83, 138), (141, 205), (205, 225),\n")
 
-        assert schedule_str == str(Schedule(self.schedule, 225))
+        assert schedule_str == str(Schedule(self.schedule, self.end_time))
+
+    def test_jobs(self):
+        schedule = Schedule(self.schedule, self.end_time)
+
+        assert self.schedule.keys() == schedule.jobs
+
+    def test_process_times(self):
+        schedule = Schedule(self.schedule, self.end_time)
+
+        for idx_job, original_proc_times in self.schedule.items():
+            assert original_proc_times == schedule.process_times(idx_job)
