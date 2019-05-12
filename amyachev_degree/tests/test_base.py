@@ -2,7 +2,8 @@ import pytest
 
 from amyachev_degree.core import (create_schedule, Jobs, Machines,
                                   JobSchedulingFrame, NaN, Duration,
-                                  Schedule, flow_job_generator)
+                                  Schedule, flow_job_generator,
+                                  johnson_three_machines_generator)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
 import amyachev_degree.util.testing as tm
@@ -193,6 +194,45 @@ class TestFlowJobGenerator:
     def test_initial_seed(self, initial_seed):
         frame = flow_job_generator(count_jobs=5, count_machines=3,
                                    initial_seed=initial_seed)
+
+        assert initial_seed == frame.initial_seed
+
+
+class TestFlowJobThreeMachinesGenerator:
+
+    @pytest.mark.parametrize('count_jobs', [1, 100])
+    @pytest.mark.parametrize('initial_seed', [None, "NaN", 123.09, []])
+    def test_bad_initial_seed(self, count_jobs, initial_seed):
+        msg = 'initial_seed must be a integer'
+
+        with pytest.raises(ValueError, match=msg):
+            johnson_three_machines_generator(count_jobs, initial_seed)
+
+    def test_bad_count_jobs_machines(self):
+        msg = 'count_jobs must be greater than zero'
+
+        with pytest.raises(ValueError, match=msg):
+            johnson_three_machines_generator(count_jobs=-1)
+
+    @pytest.mark.parametrize('count_jobs', [1, 2, 5, 100])
+    def test_count_jobs_and_machines(self, count_jobs):
+        frame = johnson_three_machines_generator(count_jobs)
+
+        assert count_jobs == frame.count_jobs
+        assert 3 == frame.count_machines
+
+    @pytest.mark.parametrize('count_jobs', [1, 2, 5])
+    def test_nan_initial_seed(self, count_jobs):
+        frame1 = johnson_three_machines_generator(count_jobs)
+        frame2 = johnson_three_machines_generator(count_jobs,
+                                                  frame1.initial_seed)
+
+        tm.assert_js_frame(frame1, frame2)
+
+    @pytest.mark.parametrize('initial_seed', [1, 12, 123, 1234])
+    def test_initial_seed(self, initial_seed):
+        frame = johnson_three_machines_generator(count_jobs=5,
+                                                 initial_seed=initial_seed)
 
         assert initial_seed == frame.initial_seed
 
