@@ -155,9 +155,9 @@ class TestSchedule:
 
 class TestFlowJobGenerator:
 
+    @pytest.mark.parametrize('count_jobs', [1, 100])
+    @pytest.mark.parametrize('count_machines', [1, 20])
     @pytest.mark.parametrize('initial_seed', [None, "NaN", 123.09, []])
-    @pytest.mark.parametrize('count_jobs', [1, 2, 5, 100])
-    @pytest.mark.parametrize('count_machines', [1, 2, 5, 20])
     def test_bad_initial_seed(self, count_jobs, count_machines, initial_seed):
         msg = 'initial_seed must be a integer'
 
@@ -171,6 +171,23 @@ class TestFlowJobGenerator:
 
         with pytest.raises(ValueError, match=msg):
             flow_job_generator(count_jobs, count_machines)
+
+    @pytest.mark.parametrize('count_jobs', [1, 2, 5, 100])
+    @pytest.mark.parametrize('count_machines', [1, 2, 5, 20])
+    def test_count_jobs_and_machines(self, count_jobs, count_machines):
+        frame = flow_job_generator(count_jobs, count_machines)
+
+        assert count_jobs == frame.count_jobs
+        assert count_machines == frame.count_machines
+
+    @pytest.mark.parametrize('count_jobs', [1, 2, 5])
+    @pytest.mark.parametrize('count_machines', [1, 2])
+    def test_nan_initial_seed(self, count_jobs, count_machines):
+        frame1 = flow_job_generator(count_jobs, count_machines)
+        frame2 = flow_job_generator(count_jobs, count_machines,
+                                    frame1.initial_seed)
+
+        tm.assert_js_frame(frame1, frame2)
 
 
 frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
