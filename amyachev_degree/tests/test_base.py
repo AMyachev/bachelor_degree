@@ -5,7 +5,7 @@ from amyachev_degree.core import (create_schedule, Jobs, Machines,
                                   Schedule, flow_job_generator)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
-import amyachev_degree.tests.util_testing as tm
+import amyachev_degree.util.testing as tm
 
 
 def test_NaN():
