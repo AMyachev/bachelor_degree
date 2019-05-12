@@ -158,3 +158,10 @@ class TestSchedule:
 
         with pytest.raises(ValueError, match=msg):
             Schedule(self.schedule, end_time)
+
+    def test__str__(self):
+        schedule_str = ("18: (0, 43), (43, 134), (134, 145),\n"
+                        "13: (43, 83), (134, 141), (145, 158),\n"
+                        "5: (83, 138), (141, 205), (205, 225),\n")
+
+        assert schedule_str == str(Schedule(self.schedule, 225))

@@ -88,9 +88,9 @@ class Schedule(object):
         """
         string = ""
         for idx_job, list_durat in self._jobs_duration_times.items():
-            string += "%s: " % idx_job
+            string += "%s:" % idx_job
             for durat in list_durat:
-                string += "(%s, %s), " % (durat.begin_time, durat.end_time)
+                string += " (%s, %s)," % (durat.begin_time, durat.end_time)
             string += "\n"
         return string
 
