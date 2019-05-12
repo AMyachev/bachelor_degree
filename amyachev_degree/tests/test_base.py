@@ -236,6 +236,19 @@ class TestFlowJobThreeMachinesGenerator:
 
         assert initial_seed == frame.initial_seed
 
+    def test_special_property(self):
+        frame = johnson_three_machines_generator(count_jobs=2)
+
+        min_proc_time1 = min([frame.get_processing_time(idx_job, 0)
+                              for idx_job in range(frame.count_jobs)])
+        max_proc_time = max([frame.get_processing_time(idx_job, 1)
+                             for idx_job in range(frame.count_jobs)])
+        min_proc_time2 = min([frame.get_processing_time(idx_job, 2)
+                              for idx_job in range(frame.count_jobs)])
+
+        assert min_proc_time1 > max_proc_time
+        assert min_proc_time2 > max_proc_time
+
 
 frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
                              [14, 21, 16], [20, 16, 20],
