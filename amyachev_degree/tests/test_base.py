@@ -140,41 +140,37 @@ class TestJobSchedulingFrame:
 class TestSchedule:
 
     def setup_method(self):
-        self.schedule = {18: [(0, 0, 43), (1, 43, 134), (2, 134, 145)],
-                         13: [(0, 43, 83), (1, 134, 141), (2, 145, 158)],
-                         5: [(0, 83, 138), (1, 141, 205), (2, 205, 225)]}
+        self.schedule_dict = {18: [(0, 0, 43), (1, 43, 134), (2, 134, 145)],
+                              13: [(0, 43, 83), (1, 134, 141), (2, 145, 158)],
+                              5: [(0, 83, 138), (1, 141, 205), (2, 205, 225)]}
         self.end_time = 225
 
-        for durations in self.schedule.values():
+        for durations in self.schedule_dict.values():
             for idx, duration_tuple in enumerate(durations):
                 durations[idx] = Duration(*duration_tuple)
 
-    def test_end_time(self):
-        schedule = Schedule(self.schedule, self.end_time)
+        self.schedule = Schedule(self.schedule_dict, self.end_time)
 
-        assert self.end_time == schedule.end_time
+    def test_end_time(self):
+        assert self.end_time == self.schedule.end_time
 
     @pytest.mark.parametrize('end_time', [None, NaN, "NaN", 123.09, []])
     def test_bad_end_time(self, end_time):
         msg = 'end_time must be a integer'
 
         with pytest.raises(ValueError, match=msg):
-            Schedule(self.schedule, end_time)
+            Schedule(self.schedule_dict, end_time)
 
     def test__str__(self):
         schedule_str = ("18: (0, 43), (43, 134), (134, 145),\n"
                         "13: (43, 83), (134, 141), (145, 158),\n"
                         "5: (83, 138), (141, 205), (205, 225),\n")
 
-        assert schedule_str == str(Schedule(self.schedule, self.end_time))
+        assert schedule_str == str(self.schedule)
 
     def test_jobs(self):
-        schedule = Schedule(self.schedule, self.end_time)
-
-        assert self.schedule.keys() == schedule.jobs
+        assert self.schedule_dict.keys() == self.schedule.jobs
 
     def test_process_times(self):
-        schedule = Schedule(self.schedule, self.end_time)
-
-        for idx_job, original_proc_times in self.schedule.items():
-            assert original_proc_times == schedule.process_times(idx_job)
+        for idx_job, original_proc_times in self.schedule_dict.items():
+            assert original_proc_times == self.schedule.process_times(idx_job)
