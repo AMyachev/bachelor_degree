@@ -2,7 +2,6 @@ import time
 import random as rd
 from collections import namedtuple
 from typing import Union
-from amyachev_degree.util.annotations import JSFrame
 
 
 Duration = namedtuple('Duration', ['machine_index', 'begin_time', 'end_time'])
@@ -232,6 +231,10 @@ class JobSchedulingFrame:
                                    proc_times)
 
 
+# aliases for annotation's purpose
+JSFrame = JobSchedulingFrame
+
+
 def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
                     count_job=None, count_machine=None) -> Schedule:
     """
@@ -289,7 +292,7 @@ def flow_job_generator(count_jobs: int, count_machines: int,
     count_jobs: int
     count_machines: int
     initial_seed: int or NaN
-        if initial_seed is NaN then the current time, that casted to int,
+        if `initial_seed` is NaN then the current time, that casted to int,
         will be taken as the seed for random generator.
 
     Returns
@@ -304,6 +307,11 @@ def flow_job_generator(count_jobs: int, count_machines: int,
     else:
         initial_seed = int(time.time())
         rd.seed(initial_seed)
+
+    if count_jobs < 1 or count_machines < 1:
+        raise ValueError('count_jobs and count_machines '
+                         'must be greater than zero')
+
     processing_time = []
     for j in range(count_jobs):
         machine_time = []

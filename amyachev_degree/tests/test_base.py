@@ -164,6 +164,14 @@ class TestFlowJobGenerator:
         with pytest.raises(ValueError, match=msg):
             flow_job_generator(count_jobs, count_machines, initial_seed)
 
+    @pytest.mark.parametrize('count_jobs, count_machines',
+                             [(-1, 5), (5, -1), (-1, -1)])
+    def test_bad_count_jobs_machines(self, count_jobs, count_machines):
+        msg = 'count_jobs and count_machines must be greater than zero'
+
+        with pytest.raises(ValueError, match=msg):
+            flow_job_generator(count_jobs, count_machines)
+
 
 frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
                              [14, 21, 16], [20, 16, 20],
