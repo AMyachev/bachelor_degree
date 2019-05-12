@@ -199,10 +199,7 @@ class JobSchedulingFrame:
         processing_time: int
 
         """
-        try:
-            return self.processing_times[idx_job][idx_machine]
-        except IndexError:
-            raise IndexError('idx_job or idx_machine out of range')
+        return self.processing_times[idx_job][idx_machine]
 
     def set_processing_times(self, processing_times):
         # raise ValueError if wrong type
