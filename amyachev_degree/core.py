@@ -285,7 +285,8 @@ def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
 def flow_job_generator(count_jobs: int, count_machines: int,
                        initial_seed: Union[int, _NaN] = NaN) -> JSFrame:
     """
-    Create Flow Job scheduling problem wrapped in `JobSchedulingFrame`.
+    Creates instance of Flow Job scheduling problem
+    wrapped in `JobSchedulingFrame`.
 
     Parameters
     ----------
@@ -325,12 +326,33 @@ def flow_job_generator(count_jobs: int, count_machines: int,
     return JobSchedulingFrame(processing_time, initial_seed=initial_seed)
 
 
-def johnson_three_machines_generator(count_jobs, initial_seed=NaN):
+def johnson_three_machines_generator(
+    count_jobs: int,
+    initial_seed: Union[int, _NaN] = NaN
+) -> JSFrame:
+
+    """
+    Creates instance of special case of Flow Shop scheduling problem, on three
+    machines, wrapped in `JobSchedulingFrame`.
+    A polynomial algorithm is known for this case.
+
+    Parameters
+    ----------
+    count_jobs: int
+    initial_seed: int or NaN
+        if `initial_seed` is NaN then the current time, that casted to int,
+        will be taken as the seed for random generator.
+
+    Returns
+    -------
+    : JobSchedulingFrame
+    """
     if initial_seed is not NaN:
         rd.seed(initial_seed)
     else:
         initial_seed = int(time.time())
         rd.seed(initial_seed)
+
     processing_time = []
     for j in range(count_jobs):
         machine_time = []
