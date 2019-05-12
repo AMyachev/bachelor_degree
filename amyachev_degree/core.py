@@ -282,6 +282,16 @@ def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
     return Schedule(schedule, machines_time[len(machines_time) - 1])
 
 
+def _set_seed(initial_seed: Union[int, _NaN]):
+    if initial_seed is not NaN:
+        if not isinstance(initial_seed, int):
+            raise ValueError('initial_seed must be a integer')
+        rd.seed(initial_seed)
+    else:
+        initial_seed = int(time.time())
+        rd.seed(initial_seed)
+
+
 def flow_job_generator(count_jobs: int, count_machines: int,
                        initial_seed: Union[int, _NaN] = NaN) -> JSFrame:
     """
@@ -301,13 +311,7 @@ def flow_job_generator(count_jobs: int, count_machines: int,
     : JobSchedulingFrame
     """
 
-    if initial_seed is not NaN:
-        if not isinstance(initial_seed, int):
-            raise ValueError('initial_seed must be a integer')
-        rd.seed(initial_seed)
-    else:
-        initial_seed = int(time.time())
-        rd.seed(initial_seed)
+    _set_seed(initial_seed)
 
     if count_jobs < 1 or count_machines < 1:
         raise ValueError('count_jobs and count_machines '
@@ -347,11 +351,11 @@ def johnson_three_machines_generator(
     -------
     : JobSchedulingFrame
     """
-    if initial_seed is not NaN:
-        rd.seed(initial_seed)
-    else:
-        initial_seed = int(time.time())
-        rd.seed(initial_seed)
+
+    _set_seed(initial_seed)
+
+    if count_jobs < 1:
+        raise ValueError('count_jobs must be greater than zero')
 
     processing_time = []
     for j in range(count_jobs):
