@@ -189,6 +189,13 @@ class TestFlowJobGenerator:
 
         tm.assert_js_frame(frame1, frame2)
 
+    @pytest.mark.parametrize('initial_seed', [1, 12, 123, 1234])
+    def test_initial_seed(self, initial_seed):
+        frame = flow_job_generator(count_jobs=5, count_machines=3,
+                                   initial_seed=initial_seed)
+
+        assert initial_seed == frame.initial_seed
+
 
 frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
                              [14, 21, 16], [20, 16, 20],
