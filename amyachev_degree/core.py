@@ -338,7 +338,7 @@ def johnson_three_machines_generator(
     """
     Creates instance of special case of Flow Shop scheduling problem, on three
     machines, wrapped in `JobSchedulingFrame`.
-    A polynomial algorithm is known for this case.
+    A polynomial algorithm to find the exact solution is known for this case.
 
     Parameters
     ----------
