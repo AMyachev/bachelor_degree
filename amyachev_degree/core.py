@@ -340,6 +340,10 @@ def johnson_three_machines_generator(
     machines, wrapped in `JobSchedulingFrame`.
     A polynomial algorithm to find the exact solution is known for this case.
 
+    Special case description:
+        the maximum processing time of all jobs on the second machine is less
+        than minimum processing time on the first and second machine.
+
     Parameters
     ----------
     count_jobs: int
