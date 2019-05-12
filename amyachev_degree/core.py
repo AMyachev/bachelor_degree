@@ -94,16 +94,32 @@ class Schedule(object):
             string += "\n"
         return string
 
-    @property
-    def end_time(self) -> int:
+    def end_time(self, idx_job: int = None, idx_machine: int = None) -> int:
         """
-        Returns time of completion of all jobs.
+        By default computes time of completion of all jobs.
+
+        If a job index and a machine index are specified then
+        computes the completion time of `idx_job` on `idx_machine`.
+
+        If only a job index is specified
+        then computes the completion time of `idx_job` on the last machine.
+
+        If only a machine index is specified
+        then computes the completion time at which the last job
+        was completed on the `idx_machine`.
 
         Returns
         -------
         : int
         """
-        return self._end_time
+        if idx_machine is None and idx_job is None:
+            return self._end_time
+        elif idx_machine is not None and idx_job is None:
+            return self._jobs_duration_times[-1][idx_machine].end_time
+        elif idx_machine is None and idx_job is not None:
+            return self._jobs_duration_times[idx_job][-1].end_time
+
+        return self._jobs_duration_times[idx_job][idx_machine].end_time
 
     def process_times(self, idx_job: int) -> list:
         """
@@ -118,23 +134,6 @@ class Schedule(object):
         : list
         """
         return self._jobs_duration_times[idx_job]
-
-    def completion_time(self, machine: int, job: int) -> int:
-        """
-        Returns the completion time of `job` on `machine`.
-
-        Parameters
-        ----------
-        machine: int
-            machine index
-        job: int
-            job index
-
-        Returns
-        -------
-        : int
-        """
-        return self._jobs_duration_times[job][machine].end_time
 
 
 class JobSchedulingFrame:

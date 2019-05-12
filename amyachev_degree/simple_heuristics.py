@@ -142,8 +142,8 @@ def weighted_idle_time(frame: JobSchedulingFrame,
     idx_second_last_job = jobs[-2]
     idx_last_job = jobs[-1]
     for idx_machine in range(1, frame.count_machines):
-        cmpl_time1 = sch.completion_time(idx_machine - 1, idx_last_job)
-        cmpl_time2 = sch.completion_time(idx_machine, idx_second_last_job)
+        cmpl_time1 = sch.end_time(idx_last_job, idx_machine - 1)
+        cmpl_time2 = sch.end_time(idx_second_last_job, idx_machine)
         numerator = frame.count_machines * max(cmpl_time1 - cmpl_time2, 0)
         denominator = idx_machine + (len(jobs) - 1) * \
             (frame.count_machines - idx_machine) / (frame.count_jobs - 2)
@@ -183,12 +183,13 @@ def artificial_time(frame: JobSchedulingFrame,
     idx_second_last_job = jobs[-2]
     idx_last_job = jobs[-1]
 
-    result_time = sch.completion_time(len(frame.count_machines) - 1,
-                                      idx_second_last_job) + \
-        sch.completion_time(len(frame.count_machines) - 1,
-                            idx_last_job)
+    end_time_sec_last_job = sch.end_time(idx_second_last_job,
+                                         len(frame.count_machines) - 1)
+    end_time_last_job = sch.end_time(idx_last_job,
+                                     len(frame.count_machines) - 1)
+    result_time = end_time_sec_last_job + end_time_last_job
     jobs.pop()
-    result_time
+    return result_time
 
 
 def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
