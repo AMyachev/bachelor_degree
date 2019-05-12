@@ -278,10 +278,13 @@ def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
 
 
 def flow_job_generator(count_jobs, count_machines, initial_seed=NaN):
+
     if initial_seed is not NaN:
+        if not isinstance(initial_seed, int):
+            raise ValueError('initial_seed must be a integer')
         rd.seed(initial_seed)
     else:
-        initial_seed = time.time()
+        initial_seed = int(time.time())
         rd.seed(initial_seed)
     processing_time = []
     for j in range(count_jobs):

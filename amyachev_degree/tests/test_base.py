@@ -2,28 +2,10 @@ import pytest
 
 from amyachev_degree.core import (create_schedule, Jobs, Machines,
                                   JobSchedulingFrame, NaN, Duration,
-                                  Schedule)
+                                  Schedule, flow_job_generator)
 
 from amyachev_degree.exact_algorithm import johnson_algorithm
 import amyachev_degree.tests.util_testing as tm
-
-frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
-                             [14, 21, 16], [20, 16, 20],
-                             [16, 17, 17]])
-test_1 = create_schedule(frame1, [2, 4, 3, 0, 1])
-assert test_1.end_time() == 114
-test_2 = create_schedule(frame1, [4, 2, 3, 0, 1])
-assert test_2.end_time() == 115
-
-frame2 = JobSchedulingFrame([[2, 3],
-                             [8, 3],
-                             [4, 6],
-                             [9, 5],
-                             [6, 8],
-                             [9, 7]])
-solution1 = johnson_algorithm(frame2)
-assert solution1 == [0, 2, 4, 5, 3, 1]
-assert create_schedule(frame2, solution1).end_time() == 41
 
 
 def test_NaN():
@@ -169,3 +151,34 @@ class TestSchedule:
     def test_process_times(self):
         for idx_job, original_proc_times in self.schedule_dict.items():
             assert original_proc_times == self.schedule.process_times(idx_job)
+
+
+class TestFlowJobGenerator:
+
+    @pytest.mark.parametrize('initial_seed', [None, "NaN", 123.09, []])
+    @pytest.mark.parametrize('count_jobs', [1, 2, 5, 100])
+    @pytest.mark.parametrize('count_machines', [1, 2, 5, 20])
+    def test_bad_initial_seed(self, count_jobs, count_machines, initial_seed):
+        msg = 'initial_seed must be a integer'
+
+        with pytest.raises(ValueError, match=msg):
+            flow_job_generator(count_jobs, count_machines, initial_seed)
+
+
+frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
+                             [14, 21, 16], [20, 16, 20],
+                             [16, 17, 17]])
+test_1 = create_schedule(frame1, [2, 4, 3, 0, 1])
+assert test_1.end_time() == 114
+test_2 = create_schedule(frame1, [4, 2, 3, 0, 1])
+assert test_2.end_time() == 115
+
+frame2 = JobSchedulingFrame([[2, 3],
+                             [8, 3],
+                             [4, 6],
+                             [9, 5],
+                             [6, 8],
+                             [9, 7]])
+solution1 = johnson_algorithm(frame2)
+assert solution1 == [0, 2, 4, 5, 3, 1]
+assert create_schedule(frame2, solution1).end_time() == 41
