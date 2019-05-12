@@ -115,7 +115,9 @@ class Schedule(object):
         if idx_machine is None and idx_job is None:
             return self._end_time
         elif idx_machine is not None and idx_job is None:
-            return self._jobs_duration_times[-1][idx_machine].end_time
+            last_idx_job = list(self._jobs_duration_times.keys())[-1]
+            last_job_duration_time = self._jobs_duration_times[last_idx_job]
+            return last_job_duration_time[idx_machine].end_time
         elif idx_machine is None and idx_job is not None:
             return self._jobs_duration_times[idx_job][-1].end_time
 

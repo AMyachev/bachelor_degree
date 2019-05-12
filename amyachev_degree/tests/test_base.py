@@ -143,8 +143,11 @@ class TestSchedule:
 
         self.schedule = Schedule(self.schedule_dict, self.end_time)
 
-    def test_end_time(self):
-        assert self.end_time == self.schedule.end_time()
+    @pytest.mark.parametrize('expect_end_time, idx_job, idx_machine',
+                             [(225, None, None), (158, 13, None),
+                              (205, None, 1), (141, 13, 1)])
+    def test_end_time(self, expect_end_time, idx_job, idx_machine):
+        assert expect_end_time == self.schedule.end_time(idx_job, idx_machine)
 
     @pytest.mark.parametrize('end_time', [None, NaN, "NaN", 123.09, []])
     def test_bad_end_time(self, end_time):
