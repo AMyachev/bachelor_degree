@@ -250,13 +250,38 @@ class TestFlowJobThreeMachinesGenerator:
         assert min_proc_time2 > max_proc_time
 
 
-frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
-                             [14, 21, 16], [20, 16, 20],
-                             [16, 17, 17]])
-test_1 = create_schedule(frame1, [2, 4, 3, 0, 1])
-assert test_1.end_time() == 114
-test_2 = create_schedule(frame1, [4, 2, 3, 0, 1])
-assert test_2.end_time() == 115
+class TestScheduleCreate:
+
+    def setup_method(self):
+        self.frame1 = JobSchedulingFrame([[17, 19, 13], [15, 11, 12],
+                                          [14, 21, 16], [20, 16, 20],
+                                          [16, 17, 17]])
+        self.frame1_solution1 = [2, 4, 3, 0, 1]
+        self.expected_end_time_f1_s1 = 114
+        self.expected_str_f1_s1 = ('2: (0, 14), (14, 35), (35, 51),\n'
+                                   '4: (14, 30), (35, 52), (52, 69),\n'
+                                   '3: (30, 50), (52, 68), (69, 89),\n'
+                                   '0: (50, 67), (68, 87), (89, 102),\n'
+                                   '1: (67, 82), (87, 98), (102, 114),\n')
+
+        self.frame1_solution2 = [4, 2, 3, 0, 1]
+        self.expected_end_time_f1_s2 = 115
+
+        self.expected_str_f1_s2 = ('4: (0, 16), (16, 33), (33, 50),\n'
+                                   '2: (16, 30), (33, 54), (54, 70),\n'
+                                   '3: (30, 50), (54, 70), (70, 90),\n'
+                                   '0: (50, 67), (70, 89), (90, 103),\n'
+                                   '1: (67, 82), (89, 100), (103, 115),\n')
+
+    def test_create_schedule(self):
+        sch = create_schedule(self.frame1, self.frame1_solution1)
+        assert sch.end_time() == self.expected_end_time_f1_s1
+        assert str(sch) == self.expected_str_f1_s1
+
+        sch2 = create_schedule(self.frame1, self.frame1_solution2)
+        assert sch2.end_time() == self.expected_end_time_f1_s2
+        assert str(sch2) == self.expected_str_f1_s2
+
 
 frame2 = JobSchedulingFrame([[2, 3],
                              [8, 3],

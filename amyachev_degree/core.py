@@ -235,15 +235,18 @@ class JobSchedulingFrame:
 JSFrame = JobSchedulingFrame
 
 
-def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
-                    count_job=None, count_machine=None) -> Schedule:
+def create_schedule(flow_job_frame: JobSchedulingFrame,
+                    jobs_sequence: list,
+                    count_job: int = None,
+                    count_machine: int = None) -> Schedule:
     """
-    Create schedule for job sequence using information from `flow_job_frame`
+    Create schedule for job sequence using JobSchedulingFrame.
 
     Parameters
     ----------
     flow_job_frame: JobSchedulingFrame
-    jobs_sequence: sequence of jobs indexes
+    jobs_sequence: list
+        solution of Flow Job scheduling problem
     count_job: int, default None
         count job from `jobs_sequence`, for that will be create schedule
     count_machine: int, default None
@@ -251,9 +254,9 @@ def create_schedule(flow_job_frame: JobSchedulingFrame, jobs_sequence,
 
     Returns
     -------
-    schedule: Schedule
+    : Schedule
     """
-    if count_job is None:
+    if count_job is None:  # Fixme
         count_job = len(jobs_sequence)
         count_machine = flow_job_frame.count_machines
 
