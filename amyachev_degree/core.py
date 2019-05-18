@@ -256,8 +256,9 @@ def create_schedule(flow_job_frame: JobSchedulingFrame,
     -------
     : Schedule
     """
-    if count_job is None:  # Fixme
+    if count_job is None:
         count_job = len(jobs_sequence)
+    if count_machine is None:
         count_machine = flow_job_frame.count_machines
 
     schedule = {job: [] for job in jobs_sequence[:count_job]}
