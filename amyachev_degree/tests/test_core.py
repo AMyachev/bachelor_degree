@@ -5,7 +5,6 @@ from amyachev_degree.core import (create_schedule, Jobs, Machines,
                                   Schedule, flow_job_generator,
                                   johnson_three_machines_generator)
 
-from amyachev_degree.exact_algorithm import johnson_algorithm
 import amyachev_degree.util.testing as tm
 
 
@@ -323,14 +322,3 @@ class TestScheduleCreate:
                             self.frame1_solution1,
                             count_job=count_job,
                             count_machine=count_machine)
-
-
-frame2 = JobSchedulingFrame([[2, 3],
-                             [8, 3],
-                             [4, 6],
-                             [9, 5],
-                             [6, 8],
-                             [9, 7]])
-solution1 = johnson_algorithm(frame2)
-assert solution1 == [0, 2, 4, 5, 3, 1]
-assert create_schedule(frame2, solution1).end_time() == 41

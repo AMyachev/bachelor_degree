@@ -3,8 +3,8 @@ from amyachev_degree.core import JobSchedulingFrame
 
 def johnson_algorithm(frame: JobSchedulingFrame) -> list:
     """
-    Compute solution for case of 2 machines of flow shop problem
-    by Johnson's algorithm.
+    Compute solution for case of 2 machines of flow job problem by
+    Johnson's algorithm.
 
     Parameters
     ----------
