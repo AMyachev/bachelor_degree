@@ -40,43 +40,56 @@ def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     return solution
 
 
-def cds_heuristics(flow_job_frame):
+def _compute_processing_times_frst_stage(frame, sub_problem):
+    processing_times = []
+    for job_index in range(frame.count_jobs):
+        sum_times = 0
+        for machine_index in range(sub_problem):
+            sum_times += frame.get_processing_time(job_index,
+                                                   machine_index)
+        processing_times.append(sum_times)
+    return processing_times
+
+
+def _compute_processing_times_scnd_stage(frame, sub_problem):
+    processing_times = []
+    count_machines = frame.count_machines
+    for job_index in range(frame.count_jobs):
+        sum_times = 0
+        for machine_index in range(count_machines - sub_problem,
+                                   count_machines):
+            sum_times += frame.get_processing_time(job_index,
+                                                   machine_index)
+        processing_times.append(sum_times)
+    return processing_times
+
+
+def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     """
+    Compute approximate solution for instance of Flow Job problem by
+    Campbell, Dudek, and Smith (CDS) heuristic.
+
+    Parameters
+    ----------
+    flow_job_frame: JobSchedulingFrame
+
+    Returns
+    -------
+    solution: list
+        sequence of job index
+
+    Notes
+    -----
     Developed:
         Campbell, Dudek, and Smith in 1970
-
-    :param flow_job_frame: JobSchedulingFrame
-    :return heuristics_solution: list of job index
     """
-    def compute_processing_times_frst_stage(_flow_job_frame, _sub_problem):
-        processing_times = []
-        for job_index in range(_flow_job_frame.count_jobs):
-            sum_times = 0
-            for machine_index in range(_sub_problem):
-                sum_times += _flow_job_frame.get_processing_time(job_index,
-                                                                 machine_index)
-            processing_times.append(sum_times)
-        return processing_times
-
-    def compute_processing_times_scnd_stage(_flow_job_frame, _sub_problem):
-        processing_times = []
-        count_machines = _flow_job_frame.count_machines
-        for job_index in range(_flow_job_frame.count_jobs):
-            sum_times = 0
-            for machine_index in range(count_machines - _sub_problem,
-                                       count_machines):
-                sum_times += _flow_job_frame.get_processing_time(job_index,
-                                                                 machine_index)
-            processing_times.append(sum_times)
-        return processing_times
-
     frame = JobSchedulingFrame([[]])
 
     johnson_solutions_with_end_time = []
     for sub_problem in range(1, flow_job_frame.count_machines):
         frame.set_processing_times(
-            [compute_processing_times_frst_stage(flow_job_frame, sub_problem),
-             compute_processing_times_scnd_stage(flow_job_frame, sub_problem)]
+            [_compute_processing_times_frst_stage(flow_job_frame, sub_problem),
+             _compute_processing_times_scnd_stage(flow_job_frame, sub_problem)]
         )
         johnson_solution = johnson_algorithm(frame)
         end_time = create_schedule(flow_job_frame, johnson_solution).end_time
