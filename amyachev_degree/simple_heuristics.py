@@ -80,19 +80,22 @@ def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
 
     Notes
     -----
-    Developed:
-        Campbell, Dudek, and Smith in 1970
+    Developed by Campbell, Dudek, and Smith in 1970
     """
     frame = JobSchedulingFrame([[]])
 
     johnson_solutions_with_end_time = []
     for sub_problem in range(1, flow_job_frame.count_machines):
-        frame.set_processing_times(
-            [_compute_processing_times_frst_stage(flow_job_frame, sub_problem),
-             _compute_processing_times_scnd_stage(flow_job_frame, sub_problem)]
-        )
+        # TODO decrease length for function name and removed transpose
+        proc_times = [_compute_processing_times_frst_stage(flow_job_frame,
+                                                           sub_problem),
+                      _compute_processing_times_scnd_stage(flow_job_frame,
+                                                           sub_problem)]
+        proc_times = list(zip(*proc_times))
+        frame.set_processing_times(proc_times)
+
         johnson_solution = johnson_algorithm(frame)
-        end_time = create_schedule(flow_job_frame, johnson_solution).end_time
+        end_time = create_schedule(flow_job_frame, johnson_solution).end_time()
         johnson_solutions_with_end_time.append((johnson_solution, end_time))
 
     johnson_solutions_with_end_time.sort(key=lambda elem: elem[1])
