@@ -261,6 +261,10 @@ def create_schedule(flow_job_frame: JobSchedulingFrame,
     if count_machine is None:
         count_machine = flow_job_frame.count_machines
 
+    if not isinstance(count_job, int) or not isinstance(count_machine, int) or\
+            count_job < 1 or count_machine < 1:
+        raise ValueError('count_job and count_machine must be integers > 0')
+
     schedule = {job: [] for job in jobs_sequence[:count_job]}
     machines_time = [0 for _ in range(count_machine)]
 

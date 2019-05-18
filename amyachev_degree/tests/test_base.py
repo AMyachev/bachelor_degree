@@ -308,6 +308,21 @@ class TestScheduleCreate:
                                count_machine=1)
         assert sch2.end_time() == 82
 
+    @pytest.mark.parametrize('count_job, count_machine', [(0.6, 1),
+                                                          (2, 1.6),
+                                                          (NaN, 1),
+                                                          (1, NaN),
+                                                          (None, -1),
+                                                          (-1, None)])
+    def test_bad_count_parameters(self, count_job, count_machine):
+        msg = 'count_job and count_machine must be integers > 0'
+
+        with pytest.raises(ValueError, match=msg):
+            create_schedule(self.frame1,
+                            self.frame1_solution1,
+                            count_job=count_job,
+                            count_machine=count_machine)
+
 
 frame2 = JobSchedulingFrame([[2, 3],
                              [8, 3],
