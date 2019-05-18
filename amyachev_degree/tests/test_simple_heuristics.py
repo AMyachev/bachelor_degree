@@ -17,7 +17,13 @@ FLOW_SHOP_INSTANCE_DIR = TAILLARD_INS_DIR + '/flow_shop_sequences'
                           ('/20jobs_20machines.txt', 16),
                           ('/50jobs_5machines.txt', 5),
                           ('/50jobs_10machines.txt', 13),
-                          ('/50jobs_20machines.txt', 15)])
+                          ('/50jobs_20machines.txt', 15),
+                          ('/100jobs_5machines.txt', 2),
+                          ('/100jobs_10machines.txt', 9),
+                          ('/100jobs_20machines.txt', 13),
+                          ('/200jobs_10machines.txt', 5),
+                          ('/200jobs_20machines.txt', 12),
+                          ('/500jobs_20machines.txt', 7)])
 def test_palmer_heuristics(file_name, expected_percent_ratio):
     frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
     assert len(frames) == 10
