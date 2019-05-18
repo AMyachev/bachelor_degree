@@ -2,32 +2,42 @@ from amyachev_degree.core import (JobSchedulingFrame, create_schedule)
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
-def palmer_heuristics(flow_job_frame):
+def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     """
+    Compute approximate solution for instance of Flow Job problem by
+    Palmer's heuristic.
+
+    Parameters
+    ----------
+    flow_job_frame: JobSchedulingFrame
+
+    Returns
+    -------
+    solution: list
+        sequence of job index
+
+    Notes
+    -----
     Journal Paper:
         Palmer, D.S., 1965. Sequencing jobs through a multi-stage process in
         the minimum total time a quick method of obtaining a near optimum.
         Operations Research Quarterly 16(1), 101-107
-
-    :param flow_job_frame: JobSchedulingFrame
-    :return heuristics_solution: list of job index
     """
     count_jobs = flow_job_frame.count_jobs
     count_machines = flow_job_frame.count_machines
 
     slope_indexes = []
-    for job_index in range(count_jobs):
+    for idx_job in range(count_jobs):
         slope_index = 0
-        for machine_index in range(count_machines):
-            slope_index -= (count_machines - (2 * (machine_index + 1) - 1)) * \
-                            flow_job_frame.get_processing_time(job_index,
-                                                               machine_index)
+        for idx_machine in range(count_machines):
+            slope_index -= (count_machines - (2 * (idx_machine + 1) - 1)) * \
+                            flow_job_frame.get_processing_time(idx_job,
+                                                               idx_machine)
         slope_indexes.append(slope_index)
 
-    heuristics_solution = [job_index for job_index in range(count_jobs)]
-    heuristics_solution.sort(key=lambda _job_index: slope_indexes[_job_index],
-                             reverse=True)
-    return heuristics_solution
+    solution = [idx_job for idx_job in range(count_jobs)]
+    solution.sort(key=lambda _idx_job: slope_indexes[_idx_job], reverse=True)
+    return solution
 
 
 def cds_heuristics(flow_job_frame):
@@ -78,7 +88,7 @@ def cds_heuristics(flow_job_frame):
 
 def neh_heuristics(flow_job_frame):
     """
-    Compute solution for Tailard's instance by NEH heuristic.
+    Compute solution for instance of Flow Job problem by NEH heuristic.
 
     Parameters
     ----------
