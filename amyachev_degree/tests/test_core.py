@@ -15,6 +15,7 @@ def test_NaN():
 
 def test_duration():
     durat = Duration(machine_index=1, begin_time=0, end_time=10)
+
     assert 1 == durat.machine_index
     assert 0 == durat.begin_time
     assert 10 == durat.end_time
