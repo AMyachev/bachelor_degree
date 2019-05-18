@@ -17,7 +17,7 @@ def johnson_algorithm(frame: JobSchedulingFrame) -> list:
         list of job index
     """
     if frame.count_machines != 2:
-        raise ValueError
+        raise ValueError('count machines must be 2')
 
     # init job indexes
     exact_solution = [i for i in range(frame.count_jobs)]
