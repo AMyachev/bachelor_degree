@@ -111,9 +111,10 @@ def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     return johnson_solutions_with_end_time[0][0]
 
 
-def neh_heuristics(flow_job_frame):
+def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     """
-    Compute solution for instance of Flow Job problem by NEH heuristic.
+    Compute approximate solution for instance of Flow Job problem by
+    NEH heuristic.
 
     Parameters
     ----------
@@ -121,7 +122,8 @@ def neh_heuristics(flow_job_frame):
 
     Returns
     -------
-    heuristics_solution: list of job index
+    neh_solution: list
+        sequence of job index
 
     Notes
     -----
@@ -152,13 +154,13 @@ def neh_heuristics(flow_job_frame):
                 min_end_time = create_schedule(
                     flow_job_frame,
                     neh_solution,
-                ).end_time
+                ).end_time()
                 best_insert_place = i
             else:
                 end_time = create_schedule(
                     flow_job_frame,
                     neh_solution,
-                ).end_time
+                ).end_time()
                 if min_end_time > end_time:
                     min_end_time = end_time
                     best_insert_place = i
