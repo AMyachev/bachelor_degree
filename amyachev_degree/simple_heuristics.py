@@ -122,7 +122,7 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
 
     Returns
     -------
-    neh_solution: list
+    solution: list
         sequence of job index
 
     Notes
@@ -142,32 +142,26 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
 
     init_jobs = [j for j in range(count_jobs)]
     init_jobs.sort(key=lambda x: all_processing_times[x], reverse=True)
-    neh_solution = [init_jobs[0]]  # using job, which have max processing time
+    solution = [init_jobs[0]]  # using job, which have max processing time
+
+    # the number is obviously greater than the minimum end time
+    time_compare = create_schedule(flow_job_frame, init_jobs).end_time() + 1
 
     # local search
-    for j in range(1, count_jobs):
-        min_end_time = -1
-        best_insert_place = 0
-        for i in range(0, j + 1):
-            neh_solution.insert(i, init_jobs[j])
-            if min_end_time == -1:
-                min_end_time = create_schedule(
-                    flow_job_frame,
-                    neh_solution,
-                ).end_time()
-                best_insert_place = i
-            else:
-                end_time = create_schedule(
-                    flow_job_frame,
-                    neh_solution,
-                ).end_time()
-                if min_end_time > end_time:
-                    min_end_time = end_time
-                    best_insert_place = i
-            neh_solution.pop(i)
-        neh_solution.insert(best_insert_place, init_jobs[j])
+    for position_job, idx_job in enumerate(init_jobs[1:], 1):
+        min_end_time = time_compare
+        for insert_place in range(position_job + 1):
+            solution.insert(insert_place, idx_job)
 
-    return neh_solution
+            end_time = create_schedule(flow_job_frame, solution).end_time()
+            if min_end_time > end_time:
+                min_end_time = end_time
+                best_insert_place = insert_place
+
+            solution.pop(insert_place)
+        solution.insert(best_insert_place, idx_job)
+
+    return solution
 
 
 def weighted_idle_time(frame: JobSchedulingFrame,
