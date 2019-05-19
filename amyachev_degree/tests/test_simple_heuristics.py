@@ -40,12 +40,12 @@ def test_palmer_heuristics(file_name, expected_percent_ratio):
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 9),
+                         [('/20jobs_5machines.txt', 10),
                           ('/20jobs_10machines.txt', 12),
                           ('/20jobs_20machines.txt', 10),
-                          ('/50jobs_5machines.txt', 6),
+                          ('/50jobs_5machines.txt', 7),
                           ('/50jobs_10machines.txt', 12),
-                          ('/50jobs_20machines.txt', 13),
+                          ('/50jobs_20machines.txt', 14),
                           ('/100jobs_5machines.txt', 5),
                           ('/100jobs_10machines.txt', 9),
                           ('/100jobs_20machines.txt', 12),
