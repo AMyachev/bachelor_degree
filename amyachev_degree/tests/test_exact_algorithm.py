@@ -1,6 +1,6 @@
 import pytest
 
-from amyachev_degree.core import create_schedule, JobSchedulingFrame
+from amyachev_degree.core import compute_end_time, JobSchedulingFrame
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
@@ -16,8 +16,8 @@ class TestJohnsonAlgorithm:
         solution = johnson_algorithm(frame)
         assert solution == [0, 2, 4, 5, 3, 1]
 
-        sch = create_schedule(frame, solution)
-        assert sch.end_time() == 41
+        solution_end_time = compute_end_time(frame, solution)
+        assert solution_end_time == 41
 
     def test_bad_frame(self):
         msg = 'count machines must be 2'

@@ -1,4 +1,5 @@
-from amyachev_degree.core import (JobSchedulingFrame, create_schedule)
+from amyachev_degree.core import (
+    JobSchedulingFrame, compute_end_time, create_schedule)
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
@@ -102,7 +103,7 @@ def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         frame.set_processing_times(proc_times)
 
         johnson_solution = johnson_algorithm(frame)
-        end_time = create_schedule(flow_job_frame, johnson_solution).end_time()
+        end_time = compute_end_time(flow_job_frame, johnson_solution)
         johnson_solutions_with_end_time.append((johnson_solution, end_time))
 
     johnson_solutions_with_end_time.sort(key=lambda elem: elem[1])
@@ -145,7 +146,7 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     solution = [init_jobs[0]]  # using job, which have max processing time
 
     # the number is obviously greater than the minimum end time
-    time_compare = create_schedule(flow_job_frame, init_jobs).end_time() + 1
+    time_compare = compute_end_time(flow_job_frame, init_jobs) + 1
 
     # local search
     for position_job, idx_job in enumerate(init_jobs[1:], 1):
@@ -153,7 +154,7 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         for insert_place in range(position_job + 1):
             solution.insert(insert_place, idx_job)
 
-            end_time = create_schedule(flow_job_frame, solution).end_time()
+            end_time = compute_end_time(flow_job_frame, solution)
             if min_end_time > end_time:
                 min_end_time = end_time
                 best_insert_place = insert_place
@@ -164,6 +165,7 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     return solution
 
 
+# TODO removed using 'create_schedule' for receiving only end_time
 def weighted_idle_time(frame: JobSchedulingFrame,
                        jobs: list, next_job: int) -> float:
     # TODO make sure that `jobs` does not change

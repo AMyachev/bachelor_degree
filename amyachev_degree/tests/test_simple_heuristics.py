@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from amyachev_degree.core import create_schedule
+from amyachev_degree.core import compute_end_time
 from amyachev_degree.io import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import (
     cds_heuristics, neh_heuristics, palmer_heuristics)
@@ -37,8 +37,8 @@ def test_palmer_heuristics(file_name, expected_percent_ratio):
     solutions_ratio = []
     for i in range(10):
         solution = palmer_heuristics(frames[i])
-        schedule = create_schedule(frames[i], solution)
-        end_time_diff = schedule.end_time() - frames[i].upper_bound
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
@@ -67,8 +67,8 @@ def test_cds_heuristics(file_name, expected_percent_ratio):
     solutions_ratio = []
     for i in range(10):
         solution = cds_heuristics(frames[i])
-        schedule = create_schedule(frames[i], solution)
-        end_time_diff = schedule.end_time() - frames[i].upper_bound
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
@@ -97,8 +97,8 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
     solutions_ratio = []
     for i in range(10):
         solution = neh_heuristics(frames[i])
-        schedule = create_schedule(frames[i], solution)
-        end_time_diff = schedule.end_time() - frames[i].upper_bound
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100

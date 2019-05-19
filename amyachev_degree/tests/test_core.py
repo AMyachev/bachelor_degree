@@ -1,6 +1,7 @@
 import pytest
 
-from amyachev_degree.core import (create_schedule, Jobs, Machines,
+from amyachev_degree.core import (compute_end_time, create_schedule,
+                                  Jobs, Machines,
                                   JobSchedulingFrame, NaN, Duration,
                                   Schedule, flow_job_generator,
                                   johnson_three_machines_generator)
@@ -303,10 +304,10 @@ class TestScheduleCreate:
         assert sch.end_time() == self.end_time_f1_s1
         assert self.str_f1_s1.startswith(str(sch))
 
-        sch2 = create_schedule(self.frame1,
-                               self.frame1_solution1,
-                               count_machine=1)
-        assert sch2.end_time() == 82
+        sch2_end_time = compute_end_time(self.frame1,
+                                         self.frame1_solution1,
+                                         count_machine=1)
+        assert sch2_end_time == 82
 
     @pytest.mark.parametrize('count_job, count_machine', [(0.6, 1),
                                                           (2, 1.6),
