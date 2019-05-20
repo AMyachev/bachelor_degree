@@ -167,22 +167,33 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
 
 # TODO removed using 'create_schedule' for receiving only end_time
 def weighted_idle_time(frame: JobSchedulingFrame,
-                       jobs: list, next_job: int) -> float:
+                       scheduled_jobs: list, next_job: int) -> float:
     # TODO make sure that `jobs` does not change
     # during the operation of the function
-    sch = create_schedule(frame, jobs.append(next_job))
+    scheduled_jobs.append(next_job)
+    sch = create_schedule(frame, scheduled_jobs)
     idle_time = 0.
-    idx_second_last_job = jobs[-2]
-    idx_last_job = jobs[-1]
-    for idx_machine in range(1, frame.count_machines):
-        cmpl_time1 = sch.end_time(idx_last_job, idx_machine - 1)
-        cmpl_time2 = sch.end_time(idx_second_last_job, idx_machine)
-        numerator = frame.count_machines * max(cmpl_time1 - cmpl_time2, 0)
-        denominator = idx_machine + (len(jobs) - 1) * \
-            (frame.count_machines - idx_machine) / (frame.count_jobs - 2)
-        idle_time += numerator / denominator
 
-    jobs.pop()  # remove this; see TODO
+    if len(scheduled_jobs) != 1:
+        idx_second_last_job = scheduled_jobs[-2]
+        idx_last_job = scheduled_jobs[-1]
+        for idx_machine in range(1, frame.count_machines):
+            cmpl_time1 = sch.end_time(idx_last_job, idx_machine - 1)
+            cmpl_time2 = sch.end_time(idx_second_last_job, idx_machine)
+            numerator = frame.count_machines * max(cmpl_time1 - cmpl_time2, 0)
+            denominator = idx_machine + (len(scheduled_jobs) - 1) * \
+                (frame.count_machines - idx_machine) / (frame.count_jobs - 2)
+            idle_time += numerator / denominator
+    else:
+        idx_last_job = scheduled_jobs[-1]
+        for idx_machine in range(1, frame.count_machines):
+            cmpl_time1 = sch.end_time(idx_last_job, idx_machine - 1)
+            numerator = frame.count_machines * cmpl_time1
+            denominator = idx_machine + (len(scheduled_jobs) - 1) * \
+                (frame.count_machines - idx_machine) / (frame.count_jobs - 2)
+            idle_time += numerator / denominator
+
+    scheduled_jobs.pop()  # remove this; see TODO
     return idle_time
 
 
@@ -200,26 +211,29 @@ def artificial_time(frame: JobSchedulingFrame,
     artificial_prc_times = []
     for idx_machine in range(frame.count_machines):
         average_time = 0.
-        for idx_job in range(unscheduled_jobs):
+        for idx_job in range(len(unscheduled_jobs)):
             average_time += frame.get_processing_time(idx_job, idx_machine)
         average_time /= len(unscheduled_jobs)
-        artificial_prc_times.append(average_time)
+        artificial_prc_times.append(round(average_time))
     processing_times.append(artificial_prc_times)
 
     assert frame.count_jobs + 1 == len(processing_times)
     assert frame.count_machines == len(processing_times[0])
 
     frame_with_artificial_job = JobSchedulingFrame(processing_times)
-    jobs.append(len(frame.count_jobs) - 1)  # added index of artificial job
+    jobs.append(frame.count_jobs - 1)  # added index of artificial job
     sch = create_schedule(frame_with_artificial_job, jobs)
 
-    idx_second_last_job = jobs[-2]
-    idx_last_job = jobs[-1]
+    if len(jobs) != 1:
+        idx_second_last_job = jobs[-2]
+        end_time_sec_last_job = sch.end_time(idx_second_last_job,
+                                             frame.count_machines - 1)
+    else:
+        end_time_sec_last_job = 0
 
-    end_time_sec_last_job = sch.end_time(idx_second_last_job,
-                                         len(frame.count_machines) - 1)
+    idx_last_job = jobs[-1]
     end_time_last_job = sch.end_time(idx_last_job,
-                                     len(frame.count_machines) - 1)
+                                     frame.count_machines - 1)
     result_time = end_time_sec_last_job + end_time_last_job
     jobs.pop()
     return result_time
@@ -237,15 +251,15 @@ def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
     init_sequence = [idx_job for idx_job in range(frame.count_jobs)]
     from copy import copy
     unscheduled_jobs = copy(init_sequence)
-    init_sequence.sort(lambda next_job: index_function(frame, [],
-                                                       unscheduled_jobs,
-                                                       next_job))
+    init_sequence.sort(key=lambda next_job: index_function(frame, [],
+                                                           unscheduled_jobs,
+                                                           next_job))
 
     solutions = []
     for idx in range(count_sequences):
         solution = [init_sequence[idx]]
         unscheduled_jobs.remove(init_sequence[idx])
-        for jdx in range(frame.count_jobs):
+        for jdx in range(frame.count_jobs - 1):
             min_job = min(unscheduled_jobs,
                           key=lambda next_job: index_function(frame, solution,
                                                               unscheduled_jobs,
@@ -253,5 +267,7 @@ def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
             solution.append(min_job)
             unscheduled_jobs.remove(min_job)
         solutions.append(solution)
-    return solutions.sort(lambda solution:
-                          create_schedule(frame, solution).end_time)[0]
+
+    solutions.sort(key=lambda solution:
+                   create_schedule(frame, solution).end_time())
+    return solutions[0]
