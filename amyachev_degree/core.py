@@ -181,6 +181,11 @@ class JobSchedulingFrame:
         return self._upper_bound
 
     @property
+    def copy_proc_time(self):
+        import copy
+        return copy.copy(self.processing_times)
+
+    @property
     def count_jobs(self):
         return self.jobs.count_jobs
 

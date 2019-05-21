@@ -106,8 +106,8 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 12),
-                          ('/20jobs_10machines.txt', 16),
+                         [('/20jobs_5machines.txt', 8),
+                          ('/20jobs_10machines.txt', 11),
                           # ('/20jobs_20machines.txt', 16),
                           # ('/50jobs_5machines.txt', 5),
                           # ('/50jobs_10machines.txt', 13),
@@ -126,7 +126,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
 
     solutions_ratio = []
     for i in range(10):
-        solution = liu_reeves_heuristric(frames[i], 1)
+        solution = liu_reeves_heuristric(frames[i], 10)
         schedule_end_time = compute_end_time(frames[i], solution)
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)

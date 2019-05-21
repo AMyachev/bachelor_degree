@@ -256,8 +256,10 @@ def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
                                                            next_job))
 
     solutions = []
+
     for idx in range(count_sequences):
         solution = [init_sequence[idx]]
+
         unscheduled_jobs.remove(init_sequence[idx])
         for jdx in range(frame.count_jobs - 1):
             min_job = min(unscheduled_jobs,
@@ -267,7 +269,7 @@ def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
             solution.append(min_job)
             unscheduled_jobs.remove(min_job)
         solutions.append(solution)
+        unscheduled_jobs = copy(init_sequence)
 
-    solutions.sort(key=lambda solution:
-                   create_schedule(frame, solution).end_time())
+    solutions.sort(key=lambda solution: compute_end_time(frame, solution))
     return solutions[0]
