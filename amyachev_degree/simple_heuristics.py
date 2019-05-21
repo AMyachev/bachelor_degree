@@ -200,21 +200,19 @@ def weighted_idle_time(frame: JobSchedulingFrame,
 def artificial_time(frame: JobSchedulingFrame,
                     jobs: list, unscheduled_jobs: list) -> int:
     #  copy processing time matrix jobs x machines from frame
-    processing_times = []
-    for idx_job in range(frame.count_jobs):
-        processing_times.append(
-            [frame.get_processing_time(idx_job, idx_machine)
-             for idx_machine in range(frame.count_machines)]
-        )
+    processing_times = frame.copy_proc_time
+
     #  creating processing times for artificial job as average of
     #  the processing times of jobs from `unscheduled_jobs`
     artificial_prc_times = []
     for idx_machine in range(frame.count_machines):
         average_time = 0.
         for idx_job in range(len(unscheduled_jobs)):
-            average_time += frame.get_processing_time(idx_job, idx_machine)
+            average_time += processing_times[idx_job][idx_machine]
+
         average_time /= len(unscheduled_jobs)
         artificial_prc_times.append(round(average_time))
+
     processing_times.append(artificial_prc_times)
 
     assert frame.count_jobs + 1 == len(processing_times)
@@ -222,18 +220,17 @@ def artificial_time(frame: JobSchedulingFrame,
 
     frame_with_artificial_job = JobSchedulingFrame(processing_times)
     jobs.append(frame.count_jobs - 1)  # added index of artificial job
-    sch = create_schedule(frame_with_artificial_job, jobs)
 
     if len(jobs) != 1:
-        idx_second_last_job = jobs[-2]
-        end_time_sec_last_job = sch.end_time(idx_second_last_job,
-                                             frame.count_machines - 1)
+        end_time_sec_last_job = compute_end_time(frame_with_artificial_job,
+                                                 jobs, len(jobs) - 1,
+                                                 frame.count_machines - 1)
     else:
         end_time_sec_last_job = 0
 
-    idx_last_job = jobs[-1]
-    end_time_last_job = sch.end_time(idx_last_job,
-                                     frame.count_machines - 1)
+    end_time_last_job = compute_end_time(frame_with_artificial_job,
+                                         jobs, len(jobs),
+                                         frame.count_machines - 1)
     result_time = end_time_sec_last_job + end_time_last_job
     jobs.pop()
     return result_time
