@@ -209,6 +209,14 @@ class JobSchedulingFrame:
         """
         return self.processing_times[idx_job][idx_machine]
 
+    # TODO make test for this functionality
+    def get_sum_processing_time(self, idx_job):
+        proc_time = 0
+        for m in range(self.count_machines):
+            proc_time += self.get_processing_time(idx_job, m)
+
+        return proc_time
+
     def set_processing_times(self, processing_times):
         # raise ValueError if wrong type
         self._check_processing_times(processing_times)
