@@ -161,7 +161,38 @@ def test_palmer_heuristics_with_local_search(file_name,
     for i in range(10):
         # TODO local search can be decorator
         solution = palmer_heuristics(frames[i])
-        solution = local_search(frames[i], solution)
+        local_search(frames[i], solution)
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
+        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
+
+    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
+    assert my_round(average_percent_ratio) == expected_percent_ratio
+
+
+@pytest.mark.parametrize('file_name, expected_percent_ratio',
+                         [('/20jobs_5machines.txt', 5),
+                          ('/20jobs_10machines.txt', 9),
+                          ('/20jobs_20machines.txt', 6),
+                          ('/50jobs_5machines.txt', 4),
+                          ('/50jobs_10machines.txt', 9),
+                          # too long time for regular testing
+                          # ('/50jobs_20machines.txt', 10),
+                          # ('/100jobs_5machines.txt', 3),
+                          # ('/100jobs_10machines.txt', 7),
+                          # ('/100jobs_20machines.txt', 9),
+                          # ('/200jobs_10machines.txt', 6),
+                          # ('/200jobs_20machines.txt', 9),
+                          # ('/500jobs_20machines.txt', 7)
+                          ])
+def test_cds_heuristics_with_local_search(file_name, expected_percent_ratio):
+    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+    assert len(frames) == 10
+
+    solutions_ratio = []
+    for i in range(10):
+        solution = cds_heuristics(frames[i])
+        local_search(frames[i], solution)
         schedule_end_time = compute_end_time(frames[i], solution)
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)

@@ -22,5 +22,3 @@ def local_search(frame: JobSchedulingFrame, init_sequence: list) -> list:
             else:
                 # reverse swap
                 swap(init_sequence, idx, idx + 1)
-
-    return init_sequence
