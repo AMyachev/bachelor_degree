@@ -134,12 +134,10 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         Omega-International Journal of Management Science 11(1), 91-95
     """
     count_jobs = flow_job_frame.count_jobs
-    count_machines = flow_job_frame.count_machines
 
     all_processing_times = [0] * count_jobs
     for j in range(count_jobs):
-        for m in range(count_machines):
-            all_processing_times[j] += flow_job_frame.get_processing_time(j, m)
+        all_processing_times[j] = flow_job_frame.get_sum_processing_time(j)
 
     init_jobs = [j for j in range(count_jobs)]
     init_jobs.sort(key=lambda x: all_processing_times[x], reverse=True)
