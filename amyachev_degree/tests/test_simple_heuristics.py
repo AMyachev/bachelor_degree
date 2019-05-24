@@ -1,10 +1,11 @@
 import os
 import pytest
 
-from amyachev_degree.core import compute_end_time
+from amyachev_degree.core import compute_end_time, JobSchedulingFrame
 from amyachev_degree.io import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import (
-    cds_heuristics, liu_reeves_heuristics, neh_heuristics, palmer_heuristics)
+    cds_heuristics, liu_reeves_heuristics, neh_heuristics,
+    palmer_heuristics, slope_index_func)
 from amyachev_degree.composite_heuristics import local_search
 from amyachev_degree.util.testing import my_round
 
@@ -15,6 +16,16 @@ FLOW_SHOP_INSTANCE_DIR = TAILLARD_INS_DIR + '/flow_shop_sequences'
 
 
 # TODO a long run test optional instead of using comments
+
+
+@pytest.mark.parametrize('idx_job, slope_index', [(0, -8), (1, -6), (2, 4),
+                                                  (3, 0), (4, 2)])
+def test_slope_index(idx_job, slope_index):
+    processing_times = [[17, 19, 13], [15, 11, 12],
+                        [14, 21, 16], [20, 16, 20], [16, 17, 17]]
+    frame = JobSchedulingFrame(processing_times)
+
+    assert slope_index == slope_index_func(frame, idx_job)
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',

@@ -145,6 +145,9 @@ class JobSchedulingFrame:
         """
         Creates frame from matrix of processing times.
 
+        `processing_times` - matrix N x M,
+        N - count of jobs, M - count of machines.
+
         Parameters
         ----------
         processing_times: list of lists of integers
