@@ -242,7 +242,7 @@ def _index_function(frame: JobSchedulingFrame, jobs: list,
 ###############################################################################
 
 
-def liu_reeves_heuristric(frame: JobSchedulingFrame, count_sequences: int):
+def liu_reeves_heuristics(frame: JobSchedulingFrame, count_sequences: int):
     init_sequence = [idx_job for idx_job in range(frame.count_jobs)]
     from copy import copy
     unscheduled_jobs = copy(init_sequence)

@@ -4,7 +4,7 @@ import pytest
 from amyachev_degree.core import compute_end_time
 from amyachev_degree.io import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import (
-    cds_heuristics, liu_reeves_heuristric, neh_heuristics, palmer_heuristics)
+    cds_heuristics, liu_reeves_heuristics, neh_heuristics, palmer_heuristics)
 from amyachev_degree.composite_heuristics import local_search
 from amyachev_degree.util.testing import my_round
 
@@ -128,7 +128,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
 
     solutions_ratio = []
     for i in range(10):
-        solution = liu_reeves_heuristric(frames[i], 5)
+        solution = liu_reeves_heuristics(frames[i], 5)
         schedule_end_time = compute_end_time(frames[i], solution)
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
@@ -137,6 +137,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
     assert my_round(average_percent_ratio) == expected_percent_ratio
 
 
+# heuristics with local search ###############################################
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
                          [('/20jobs_5machines.txt', 5),
                           ('/20jobs_10machines.txt', 8),
@@ -199,3 +200,62 @@ def test_cds_heuristics_with_local_search(file_name, expected_percent_ratio):
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
     assert my_round(average_percent_ratio) == expected_percent_ratio
+
+
+@pytest.mark.parametrize('file_name, expected_percent_ratio',
+                         [('/20jobs_5machines.txt', 3),
+                          ('/20jobs_10machines.txt', 4),
+                          # too long time for regular testing
+                          # ('/20jobs_20machines.txt', 3),
+                          # ('/50jobs_5machines.txt', 1),
+                          # ('/50jobs_10machines.txt', 4),
+                          # ('/50jobs_20machines.txt', 6),
+                          # ('/100jobs_5machines.txt', 0),
+                          # ('/100jobs_10machines.txt', 2),
+                          # ('/100jobs_20machines.txt', 4),
+                          # ('/200jobs_10machines.txt', 1),
+                          # ('/200jobs_20machines.txt', 3),
+                          # ('/500jobs_20machines.txt', 2)
+                          ])
+def test_neh_heuristics_with_local_search(file_name, expected_percent_ratio):
+    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+    assert len(frames) == 10
+
+    solutions_ratio = []
+    for i in range(10):
+        solution = neh_heuristics(frames[i])
+        local_search(frames[i], solution)
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
+        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
+
+    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
+    assert my_round(average_percent_ratio) == expected_percent_ratio
+###############################################################################
+
+
+# for research interests
+def test_difference():
+    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR
+                                      + '/20jobs_5machines.txt')
+    frame = frames[0]
+
+    palmer_solution = palmer_heuristics(frame)
+    local_search(frame, palmer_solution)
+    print("\npalmer solution: ", palmer_solution, "\npalmer end time: %s\n\n"
+          % str(compute_end_time(frame, palmer_solution)))
+
+    cds_solution = cds_heuristics(frame)
+    local_search(frame, cds_solution)
+    print("cds solution: ", cds_solution, "\ncds end time: %s\n\n"
+          % str(compute_end_time(frame, cds_solution)))
+
+    neh_solution = neh_heuristics(frame)
+    local_search(frame, neh_solution)
+    print("neh solution: ", neh_solution, "\nneh end time: %s\n\n"
+          % str(compute_end_time(frame, neh_solution)))
+
+    liu_solution = liu_reeves_heuristics(frame, 20)
+    local_search(frame, liu_solution)
+    print("liu solution: ", liu_solution, "\nliu end time: %s\n\n"
+          % str(compute_end_time(frame, liu_solution)))
