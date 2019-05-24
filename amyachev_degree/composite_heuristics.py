@@ -56,6 +56,10 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
     -------
     result of local search: list
 
+    Notes
+    -----
+    don't modificate `init_jobs`
+
     """
     solution = [init_jobs[0]]  # using job, which have max processing time
 

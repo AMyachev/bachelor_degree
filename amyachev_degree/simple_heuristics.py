@@ -293,3 +293,21 @@ def liu_reeves_heuristics(frame: JobSchedulingFrame, count_sequences: int):
 
     solutions.sort(key=lambda solution: compute_end_time(frame, solution))
     return solutions[0]
+
+
+def fgh_index(time: int, alpha: float, tetta: float) -> float:
+    denomenator = 1 + alpha**2 * (((1 - alpha) / alpha) * time - tetta)**2
+    return 1/denomenator
+
+
+def fgh_heuristic(frame: JobSchedulingFrame) -> list:
+    init_jobs = [idx_job for idx_job in range(frame.count_jobs)]
+    sum_times = [frame.get_sum_processing_time(idx_job)
+                 for idx_job in init_jobs]
+
+    tetta = sum(sum_times) / frame.count_jobs
+    init_jobs.sort(key=lambda idx_job: fgh_index(sum_times[idx_job],
+                                                 0.5, tetta), reverse=True)
+
+    solution = local_search_partitial_sequence(init_jobs)
+    return solution
