@@ -33,14 +33,14 @@ def slope_index_func(frame: JobSchedulingFrame, idx_job: int) -> int:
     return slope_index
 
 
-def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
+def palmer_heuristics(frame: JobSchedulingFrame) -> list:
     """
     Compute approximate solution for instance of Flow Job problem by
     Palmer's heuristic.
 
     Parameters
     ----------
-    flow_job_frame: JobSchedulingFrame
+    frame: JobSchedulingFrame
 
     Returns
     -------
@@ -55,56 +55,50 @@ def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         Operations Research Quarterly 16(1), 101-107
 
     """
-    count_jobs = flow_job_frame.count_jobs
+    count_jobs = frame.count_jobs
 
     slope_indexes = []
     for idx_job in range(count_jobs):
-        slope_indexes.append(slope_index_func(flow_job_frame, idx_job))
+        slope_indexes.append(slope_index_func(frame, idx_job))
 
     solution = [idx_job for idx_job in range(count_jobs)]
     solution.sort(key=lambda _idx_job: slope_indexes[_idx_job], reverse=True)
     return solution
 
 
-# supported functions for CDS heuristics ######################################
-def _cds_first_stage(frame: JobSchedulingFrame, sub_problem: int) -> list:
-    processing_times = []
-
-    for idx_job in range(frame.count_jobs):
-        time = 0
-        # From `sub_problem` count machines will make one artificial,
-        # summing up the processing times on each of them.
-        for idx_machine in range(sub_problem):
-            time += frame.get_processing_time(idx_job, idx_machine)
-        processing_times.append(time)
-
-    return processing_times
-
-
-def _cds_second_stage(frame: JobSchedulingFrame, sub_problem: int) -> list:
+def cds_create_proc_times(frame: JobSchedulingFrame, sub_problem: int) -> list:
     processing_times = []
     count_machines = frame.count_machines
 
     for idx_job in range(frame.count_jobs):
-        time = 0
+        first_machine_time = 0
+        second_machine_time = 0
+
+        # From `sub_problem` count machines will make one artificial,
+        # summing up the processing times on each of them.
+        for idx_machine in range(sub_problem):
+            first_machine_time += frame.get_processing_time(idx_job,
+                                                            idx_machine)
+
         # From `sub_problem` machines will make one artificial,
         # summing up the processing times on each of them.
         for idx_machine in range(count_machines - sub_problem, count_machines):
-            time += frame.get_processing_time(idx_job, idx_machine)
-        processing_times.append(time)
+            second_machine_time += frame.get_processing_time(idx_job,
+                                                             idx_machine)
+
+        processing_times.append([first_machine_time, second_machine_time])
 
     return processing_times
-###############################################################################
 
 
-def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
+def cds_heuristics(frame: JobSchedulingFrame) -> list:
     """
     Compute approximate solution for instance of Flow Job problem by
     Campbell, Dudek, and Smith (CDS) heuristic.
 
     Parameters
     ----------
-    flow_job_frame: JobSchedulingFrame
+    frame: JobSchedulingFrame
 
     Returns
     -------
@@ -113,22 +107,22 @@ def cds_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
 
     Notes
     -----
-    Developed by Campbell, Dudek, and Smith in 1970
+    Developed by Campbell, Dudek, and Smith in 1970.
+
     """
-    frame = JobSchedulingFrame([[]])
+    johnson_frame = JobSchedulingFrame([[]])
     johnson_solutions_with_end_time = []
 
     # Create `count_machines - 1` sub-problems
     # which will be solved by Johnson's algorithm
-    for sub_problem in range(1, flow_job_frame.count_machines):
+    for sub_problem in range(1, frame.count_machines):
         # Create processing times matrix for all jobs on only 2 machines
-        proc_times = [_cds_first_stage(flow_job_frame, sub_problem),
-                      _cds_second_stage(flow_job_frame, sub_problem)]
-        proc_times = list(zip(*proc_times))  # transposition
-        frame.set_processing_times(proc_times)
+        proc_times = cds_create_proc_times(frame, sub_problem)
+        johnson_frame.set_processing_times(proc_times)
+        johnson_solution = johnson_algorithm(johnson_frame)
 
-        johnson_solution = johnson_algorithm(frame)
-        end_time = compute_end_time(flow_job_frame, johnson_solution)
+        # end time compute for the original task, that is `frame`
+        end_time = compute_end_time(frame, johnson_solution)
         johnson_solutions_with_end_time.append((johnson_solution, end_time))
 
     johnson_solutions_with_end_time.sort(key=lambda elem: elem[1])
