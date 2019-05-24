@@ -1,6 +1,8 @@
 from amyachev_degree.core import (
     JobSchedulingFrame, compute_end_time, create_schedule)
 from amyachev_degree.exact_algorithm import johnson_algorithm
+from amyachev_degree.composite_heuristics import (
+    local_search_partitial_sequence)
 
 
 def slope_index_func(frame: JobSchedulingFrame, idx_job: int) -> int:
@@ -150,14 +152,14 @@ def cds_heuristics(frame: JobSchedulingFrame) -> list:
     return johnson_solutions_with_end_time[0][0]
 
 
-def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
+def neh_heuristics(frame: JobSchedulingFrame) -> list:
     """
     Compute approximate solution for instance of Flow Job problem by
     NEH heuristic.
 
     Parameters
     ----------
-    flow_job_frame: JobSchedulingFrame
+    frame: JobSchedulingFrame
 
     Returns
     -------
@@ -170,34 +172,18 @@ def neh_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         Nawaz,M., Enscore,Jr.E.E, and Ham,I. (1983) A Heuristics Algorithm for
         the m Machine, n Job Flowshop Sequencing Problem.
         Omega-International Journal of Management Science 11(1), 91-95
+
     """
-    count_jobs = flow_job_frame.count_jobs
+    count_jobs = frame.count_jobs
 
     all_processing_times = [0] * count_jobs
     for j in range(count_jobs):
-        all_processing_times[j] = flow_job_frame.get_sum_processing_time(j)
+        all_processing_times[j] = frame.get_sum_processing_time(j)
 
     init_jobs = [j for j in range(count_jobs)]
     init_jobs.sort(key=lambda x: all_processing_times[x], reverse=True)
-    solution = [init_jobs[0]]  # using job, which have max processing time
 
-    # the number is obviously greater than the minimum end time
-    time_compare = compute_end_time(flow_job_frame, init_jobs) + 1
-
-    # local search
-    for position_job, idx_job in enumerate(init_jobs[1:], 1):
-        min_end_time = time_compare
-        for insert_place in range(position_job + 1):
-            solution.insert(insert_place, idx_job)
-
-            end_time = compute_end_time(flow_job_frame, solution)
-            if min_end_time > end_time:
-                min_end_time = end_time
-                best_insert_place = insert_place
-
-            solution.pop(insert_place)
-        solution.insert(best_insert_place, idx_job)
-
+    solution = local_search_partitial_sequence(frame, init_jobs)
     return solution
 
 
