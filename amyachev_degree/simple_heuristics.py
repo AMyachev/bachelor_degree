@@ -67,6 +67,24 @@ def palmer_heuristics(frame: JobSchedulingFrame) -> list:
 
 
 def cds_create_proc_times(frame: JobSchedulingFrame, sub_problem: int) -> list:
+    """
+    Create processing time matrix with 2 machines from matrix with M machines
+    according to the CDS heuristic rule.
+
+    Parameters
+    ----------
+    frame: JobSchedulingFrame
+    sub_problem: int
+
+    Returns
+    -------
+    matrix of processing times: list
+
+    Notes
+    -----
+    Developed by Campbell, Dudek, and Smith in 1970.
+
+    """
     processing_times = []
     count_machines = frame.count_machines
 
