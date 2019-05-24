@@ -75,6 +75,7 @@ def cds_create_proc_times(frame: JobSchedulingFrame, sub_problem: int) -> list:
     ----------
     frame: JobSchedulingFrame
     sub_problem: int
+        `sub_problem` values start with 1
 
     Returns
     -------

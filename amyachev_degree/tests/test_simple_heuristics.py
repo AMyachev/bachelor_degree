@@ -4,10 +4,10 @@ import pytest
 from amyachev_degree.core import compute_end_time, JobSchedulingFrame
 from amyachev_degree.io import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import (
-    cds_heuristics, liu_reeves_heuristics, neh_heuristics,
-    palmer_heuristics, slope_index_func)
+    cds_create_proc_times, cds_heuristics, liu_reeves_heuristics,
+    neh_heuristics, palmer_heuristics, slope_index_func)
 from amyachev_degree.composite_heuristics import local_search
-from amyachev_degree.util.testing import my_round
+from amyachev_degree.util.testing import assert_js_frame, my_round
 
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -56,6 +56,28 @@ def test_palmer_heuristics(file_name, expected_percent_ratio):
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
     assert my_round(average_percent_ratio) == expected_percent_ratio
+
+
+def test_cds_create_proc_times():
+    processing_times = [[17, 19, 13], [15, 11, 12],
+                        [14, 21, 16], [20, 16, 20], [16, 17, 17]]
+    frame = JobSchedulingFrame(processing_times)
+    johnson_frame = JobSchedulingFrame([[]])
+
+    # sub problem index begin with 1
+    processing_times_first = cds_create_proc_times(frame, 1)
+    johnson_frame.set_processing_times(processing_times_first)
+
+    assert_js_frame(johnson_frame, JobSchedulingFrame([[17, 13], [15, 12],
+                                                       [14, 16], [20, 20],
+                                                       [16, 17]]))
+
+    processing_times_second = cds_create_proc_times(frame, 2)
+    johnson_frame.set_processing_times(processing_times_second)
+
+    assert_js_frame(johnson_frame, JobSchedulingFrame([[36, 32], [26, 23],
+                                                       [35, 37], [36, 36],
+                                                       [33, 34]]))
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
