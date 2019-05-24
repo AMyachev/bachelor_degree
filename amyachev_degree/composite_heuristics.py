@@ -6,16 +6,21 @@ def swap(sequence, fst, scnd):
 
 
 def local_search(frame: JobSchedulingFrame, init_sequence: list) -> list:
-    for idx in range(len(init_sequence) - 1):
-        best_flowshop_time = compute_end_time(frame, init_sequence)
+    # hack for start the loop
+    improvement = True
+    while improvement:
+        improvement = False
+        for idx in range(len(init_sequence) - 1):
+            best_flowshop_time = compute_end_time(frame, init_sequence)
 
-        swap(init_sequence, idx, idx + 1)
-
-        new_flowshop_time = compute_end_time(frame, init_sequence)
-        if best_flowshop_time > new_flowshop_time:
-            best_flowshop_time = new_flowshop_time
-        else:
-            # reverse swap
             swap(init_sequence, idx, idx + 1)
+
+            new_flowshop_time = compute_end_time(frame, init_sequence)
+            if best_flowshop_time > new_flowshop_time:
+                best_flowshop_time = new_flowshop_time
+                improvement = True
+            else:
+                # reverse swap
+                swap(init_sequence, idx, idx + 1)
 
     return init_sequence
