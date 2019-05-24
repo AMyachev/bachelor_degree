@@ -5,23 +5,38 @@ def swap(sequence, fst, scnd):
     sequence[fst], sequence[scnd] = sequence[scnd], sequence[fst]
 
 
-def local_search(frame: JobSchedulingFrame, init_sequence: list) -> list:
+def local_search(frame: JobSchedulingFrame, init_jobs: list) -> list:
+    """
+    Local search occurs by pairwise exchange of jobs and evaluation
+    of the total flow time.
+
+    Parameters
+    ----------
+    frame: JobSchedulingFrame
+    init_jobs: list
+
+    Returns
+    -------
+    result of local search: list
+
+    """
     # hack for start the loop
     improvement = True
+
     while improvement:
         improvement = False
-        for idx in range(len(init_sequence) - 1):
-            best_flowshop_time = compute_end_time(frame, init_sequence)
+        for idx in range(len(init_jobs) - 1):
+            best_flowshop_time = compute_end_time(frame, init_jobs)
 
-            swap(init_sequence, idx, idx + 1)
+            swap(init_jobs, idx, idx + 1)
 
-            new_flowshop_time = compute_end_time(frame, init_sequence)
+            new_flowshop_time = compute_end_time(frame, init_jobs)
             if best_flowshop_time > new_flowshop_time:
                 best_flowshop_time = new_flowshop_time
                 improvement = True
             else:
                 # reverse swap
-                swap(init_sequence, idx, idx + 1)
+                swap(init_jobs, idx, idx + 1)
 
 
 def local_search_partitial_sequence(frame: JobSchedulingFrame,
