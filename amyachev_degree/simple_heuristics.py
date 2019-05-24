@@ -3,6 +3,36 @@ from amyachev_degree.core import (
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
+def slope_index_func(frame: JobSchedulingFrame, idx_job: int) -> int:
+    """
+    Compute slope index for `idx_job` using the method invented by Palmer, D.S.
+
+    Parameters
+    ----------
+    frame: JobSchedulingFrame
+    idx_job: int
+
+    Returns
+    -------
+    slope index: int
+
+    Notes
+    -----
+    Journal Paper:
+        Palmer, D.S., 1965. Sequencing jobs through a multi-stage process in
+        the minimum total time a quick method of obtaining a near optimum.
+        Operations Research Quarterly 16(1), 101-107
+
+    """
+    count_machines = frame.count_machines
+    slope_index = 0
+    for idx_machine in range(count_machines):
+        slope_index -= (count_machines - (2 * (idx_machine + 1) - 1)) * \
+                        frame.get_processing_time(idx_job, idx_machine)
+
+    return slope_index
+
+
 def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
     """
     Compute approximate solution for instance of Flow Job problem by
@@ -23,18 +53,13 @@ def palmer_heuristics(flow_job_frame: JobSchedulingFrame) -> list:
         Palmer, D.S., 1965. Sequencing jobs through a multi-stage process in
         the minimum total time a quick method of obtaining a near optimum.
         Operations Research Quarterly 16(1), 101-107
+
     """
     count_jobs = flow_job_frame.count_jobs
-    count_machines = flow_job_frame.count_machines
 
     slope_indexes = []
     for idx_job in range(count_jobs):
-        slope_index = 0
-        for idx_machine in range(count_machines):
-            slope_index -= (count_machines - (2 * (idx_machine + 1) - 1)) * \
-                            flow_job_frame.get_processing_time(idx_job,
-                                                               idx_machine)
-        slope_indexes.append(slope_index)
+        slope_indexes.append(slope_index_func(flow_job_frame, idx_job))
 
     solution = [idx_job for idx_job in range(count_jobs)]
     solution.sort(key=lambda _idx_job: slope_indexes[_idx_job], reverse=True)
