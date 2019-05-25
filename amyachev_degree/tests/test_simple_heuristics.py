@@ -4,8 +4,9 @@ import pytest
 from amyachev_degree.core import compute_end_time, JobSchedulingFrame
 from amyachev_degree.io import read_flow_shop_instances
 from amyachev_degree.simple_heuristics import (
-    cds_create_proc_times, cds_heuristics, liu_reeves_heuristics,
-    neh_heuristics, palmer_heuristics, slope_index_func)
+    cds_create_proc_times, cds_heuristics, fgh_heuristic,
+    liu_reeves_heuristics, neh_heuristics, palmer_heuristics,
+    slope_index_func)
 from amyachev_degree.composite_heuristics import local_search
 from amyachev_degree.util.testing import assert_js_frame, my_round
 
@@ -162,6 +163,37 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
     solutions_ratio = []
     for i in range(10):
         solution = liu_reeves_heuristics(frames[i], 5)
+        schedule_end_time = compute_end_time(frames[i], solution)
+        end_time_diff = schedule_end_time - frames[i].upper_bound
+        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
+
+    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
+    assert my_round(average_percent_ratio) == expected_percent_ratio
+
+
+@pytest.mark.parametrize('file_name, expected_percent_ratio',
+                         [('/20jobs_5machines.txt', 2),
+                          ('/20jobs_10machines.txt', 3),
+                          # too long time for regular testing
+                          # ('/20jobs_20machines.txt', 4),
+                          # ('/50jobs_5machines.txt', 1),
+                          # ('/50jobs_10machines.txt', 5),
+                          # ('/50jobs_20machines.txt', 6),
+                          # ('/100jobs_5machines.txt', 0),
+                          # ('/100jobs_10machines.txt', 2),
+                          # ('/100jobs_20machines.txt', 4),
+                          # ('/200jobs_10machines.txt', 1),
+                          # ('/200jobs_20machines.txt', 3),
+                          # ('/500jobs_20machines.txt', 2)
+                          ])
+def test_fgh_heuristic(file_name, expected_percent_ratio):
+    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+    assert len(frames) == 10
+
+    solutions_ratio = []
+    for i in range(10):
+        # TODO need a way to automatically define `count_alpha` variable
+        solution = fgh_heuristic(frames[i], count_alpha=11)
         schedule_end_time = compute_end_time(frames[i], solution)
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
