@@ -3,6 +3,7 @@ from amyachev_degree.core import (
 from amyachev_degree.exact_algorithm import johnson_algorithm
 from amyachev_degree.composite_heuristics import (
     local_search_partitial_sequence)
+from copy import copy
 
 
 def slope_index_func(frame: JobSchedulingFrame, idx_job: int) -> int:
@@ -268,7 +269,6 @@ def _index_function(frame: JobSchedulingFrame, jobs: list,
 
 def liu_reeves_heuristics(frame: JobSchedulingFrame, count_sequences: int):
     init_sequence = [idx_job for idx_job in range(frame.count_jobs)]
-    from copy import copy
     unscheduled_jobs = copy(init_sequence)
     init_sequence.sort(key=lambda next_job: _index_function(frame, [],
                                                             unscheduled_jobs,
@@ -300,14 +300,28 @@ def fgh_index(time: int, alpha: float, tetta: float) -> float:
     return 1/denomenator
 
 
-def fgh_heuristic(frame: JobSchedulingFrame) -> list:
+def fgh_heuristic(frame: JobSchedulingFrame, count_alpha: int = 1) -> list:
     init_jobs = [idx_job for idx_job in range(frame.count_jobs)]
     sum_times = [frame.get_sum_processing_time(idx_job)
                  for idx_job in init_jobs]
-
     tetta = sum(sum_times) / frame.count_jobs
-    init_jobs.sort(key=lambda idx_job: fgh_index(sum_times[idx_job],
-                                                 0.5, tetta), reverse=True)
 
-    solution = local_search_partitial_sequence(init_jobs)
-    return solution
+    time_min = min(sum_times)
+    time_max = max(sum_times)
+    alpha_min = time_min / (time_min + tetta)
+    alpha_max = time_max / (time_max + tetta)
+    period = (alpha_max - alpha_min) / count_alpha
+
+    solutions = []
+    for i in range(count_alpha):
+        alpha = alpha_max - period * i
+        init_jobs.sort(key=lambda idx_job: fgh_index(sum_times[idx_job],
+                                                     alpha, tetta),
+                       reverse=True)
+        solutions.append(copy(init_jobs))
+
+    for i in range(count_alpha):
+        solutions[i] = local_search_partitial_sequence(frame, solutions[i])
+
+    solutions.sort(key=lambda solution: compute_end_time(frame, solution))
+    return solutions[0]
