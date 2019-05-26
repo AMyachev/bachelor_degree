@@ -46,8 +46,8 @@ class TestJohnsonProblems:
                               (200, 216771124, 0.02),
                               (500, 495070989, 0.01)
                               ])
-    def test_palmer_heuristic_johnson_problem(self, count_jobs, time_seed,
-                                              expected_percent_ratio):
+    def test_palmer_heuristic(self, count_jobs, time_seed,
+                              expected_percent_ratio):
         """
         Function for research.
 
@@ -64,7 +64,7 @@ class TestJohnsonProblems:
         -----
         Starts as follows (from root folder):
             `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-            ::test_palmer_heuristic_johnson_problem`
+             ::TestJohnsonProblems::test_palmer_heuristic`
 
         All tests run about 1.5 sec.
 
@@ -86,8 +86,8 @@ class TestJohnsonProblems:
                               # (200, 216771124, 0.00),
                               # (500, 495070989, 0.00)
                               ])
-    def test_neh_heuristic_johnson_problem(self, count_jobs, time_seed,
-                                           expected_percent_ratio):
+    def test_neh_heuristic(self, count_jobs, time_seed,
+                           expected_percent_ratio):
         """
         Function for research.
 
@@ -104,7 +104,7 @@ class TestJohnsonProblems:
         -----
         Starts as follows (from root folder):
             `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-            ::test_neh_heuristic_johnson_problem`
+             ::TestJohnsonProblems::test_neh_heuristic`
 
         All tests run about 600 sec.
 
@@ -126,8 +126,8 @@ class TestJohnsonProblems:
                               # (200, 216771124, 0.12),
                               # (500, 495070989, 0.08)
                               ])
-    def test_liu_reeves_heuristic_johnson_problem(self, count_jobs, time_seed,
-                                                  expected_percent_ratio):
+    def test_liu_reeves_heuristic(self, count_jobs, time_seed,
+                                  expected_percent_ratio):
         """
         Function for research.
 
@@ -144,7 +144,7 @@ class TestJohnsonProblems:
         -----
         Starts as follows (from root folder):
             `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-            ::test_liu_reeves_heuristic_johnson_problem`
+             ::TestJohnsonProblems::test_liu_reeves_heuristic`
 
         All tests run about 6600 sec.
 
