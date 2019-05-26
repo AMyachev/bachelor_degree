@@ -158,26 +158,6 @@ def test_liu_reeves_heuristic_johnson_problem(count_jobs, time_seed,
     All tests run about 6600 sec.
 
     """
-    '''count_machines = 2
-    frames = []
-    for i in range(10):
-        frames.append(flow_job_generator(count_jobs,
-                                         count_machines, time_seed + i))
-    assert len(frames) == 10
-
-    solutions_ratio = []
-    for i in range(10):
-        solution = liu_reeves_heuristics(frames[i], count_sequences=5)
-        schedule_end_time = compute_end_time(frames[i], solution)
-
-        johnson_solution = johnson_algorithm(frames[i])
-        best_end_time = compute_end_time(frames[i], johnson_solution)
-
-        end_time_diff = schedule_end_time - best_end_time
-        solutions_ratio.append(end_time_diff / best_end_time)
-
-    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    '''
     average_percent_ratio = _percentage_deviation_johnson_problem(
         count_jobs, time_seed, count_problem=10,
         heuristic=liu_reeves_heuristics, count_sequences=5)
