@@ -2,7 +2,8 @@ import pytest
 
 from amyachev_degree.core import (flow_job_generator,
                                   johnson_three_machines_generator)
-from amyachev_degree.simple_heuristics import (liu_reeves_heuristics,
+from amyachev_degree.simple_heuristics import (cds_heuristics,
+                                               liu_reeves_heuristics,
                                                neh_heuristics,
                                                palmer_heuristics)
 from amyachev_degree.exact_algorithm import johnson_algorithm
@@ -66,7 +67,7 @@ class TestJohnsonProblems:
             `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
              ::TestJohnsonProblems::test_palmer_heuristic`
 
-        All tests run about 1.5 sec.
+        All tests run about 1.38 sec.
 
         """
         frames = self.generation_problems(
@@ -156,5 +157,44 @@ class TestJohnsonProblems:
         average_percent_ratio = percentage_deviation(
             liu_reeves_heuristics, {'count_sequences': 5},
             johnson_algorithm, {}, frames)
+
+        assert round(average_percent_ratio, 2) == expected_percent_ratio
+
+    @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
+                             [(20, 873654221, 1.4),
+                              (50, 379008056, 0.53),
+                              (100, 1866992158, 0.26),
+                              (200, 216771124, 0.13),
+                              (500, 495070989, 0.05)
+                              ])
+    def test_palmer_heuristic_three_machines(self, count_jobs, time_seed,
+                                             expected_percent_ratio):
+        """
+        Function for research.
+
+        Problem
+        -------
+        Johnson's problem of three machines.
+
+        Abstract
+        --------
+        The experiment consists in comparing the results of palmer heuristic
+        with the exact solution found by CDS algorithm(sub_problem=2).
+
+        Notes
+        -----
+        Starts as follows (from root folder):
+            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
+             ::TestJohnsonProblems::test_palmer_heuristic_three_machines`
+
+        All tests run about 1.52 sec.
+
+        """
+        frames = self.generation_problems(
+            count_problem=10, generator=johnson_three_machines_generator,
+            count_jobs=count_jobs, initial_seed=time_seed)
+
+        average_percent_ratio = percentage_deviation(
+            palmer_heuristics, {}, cds_heuristics, {}, frames)
 
         assert round(average_percent_ratio, 2) == expected_percent_ratio
