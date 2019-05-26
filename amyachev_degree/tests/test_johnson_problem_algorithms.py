@@ -83,6 +83,8 @@ def test_palmer_heuristic_johnson_problem(count_jobs, time_seed,
         `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
          ::test_palmer_heuristic_johnson_problem`
 
+    All tests run about 1.5 sec.
+
     """
     average_percent_ratio = _percentage_deviation_johnson_problem(
         count_jobs, time_seed, count_problem=10, heuristic=palmer_heuristics)
