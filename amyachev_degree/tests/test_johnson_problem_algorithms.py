@@ -239,6 +239,7 @@ class TestJohnsonProblems:
 
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
+    # TODO fix expected_percent_ratio
     @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
                              [(20, 873654221, 1.4),
                               (50, 379008056, 0.53),
