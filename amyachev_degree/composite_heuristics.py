@@ -17,9 +17,16 @@ def local_search(frame: JobSchedulingFrame, init_jobs: list) -> list:
 
     Returns
     -------
-    result of local search: list
+    result of local search: bool
+        if the `init_jobs` is changed , returns True.
+
+    Notes
+    -----
+    Modifies the original job sequence
 
     """
+    changed_init_jobs = False
+
     # hack for start the loop
     improvement = True
 
@@ -34,9 +41,12 @@ def local_search(frame: JobSchedulingFrame, init_jobs: list) -> list:
             if best_flowshop_time > new_flowshop_time:
                 best_flowshop_time = new_flowshop_time
                 improvement = True
+                changed_init_jobs = True
             else:
                 # reverse swap
                 swap(init_jobs, idx, idx + 1)
+
+    return changed_init_jobs
 
 
 def local_search_partitial_sequence(frame: JobSchedulingFrame,

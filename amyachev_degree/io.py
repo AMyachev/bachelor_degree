@@ -96,6 +96,7 @@ def read_flow_shop_instances(file_name):
     return frames
 
 
+# TODO test this!
 def create_gantt_chart(schedule, filename='gantt_chart.html'):
     """
     :param schedule: Schedule object
