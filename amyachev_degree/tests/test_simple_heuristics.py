@@ -8,7 +8,7 @@ from amyachev_degree.simple_heuristics import (
     liu_reeves_heuristics, neh_heuristics, palmer_heuristics,
     slope_index_func)
 from amyachev_degree.composite_heuristics import local_search
-from amyachev_degree.util.testing import assert_js_frame, my_round
+from amyachev_degree.util.testing import assert_js_frame
 
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -142,22 +142,26 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
     assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
+# TODO fix expected_percent_ratio
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 8),
-                          ('/20jobs_10machines.txt', 12),
+                         [#('/20jobs_5machines.txt', 7.96),
+                          #('/20jobs_10machines.txt', 11.99),
                           # too long time for regular testing
-                          # ('/20jobs_20machines.txt', 13),
-                          # ('/50jobs_5machines.txt', 5),
-                          # ('/50jobs_10machines.txt', 12),
-                          # ('/50jobs_20machines.txt', 14),
-                          # ('/100jobs_5machines.txt', 3),
-                          # ('/100jobs_10machines.txt', 6),
-                          # ('/100jobs_20machines.txt', 14),
-                          # ('/200jobs_10machines.txt', 4),
-                          # ('/200jobs_20machines.txt', 11),
-                          # ('/500jobs_20machines.txt', 7)
+                          # ('/20jobs_20machines.txt', 13.36),
+
+                          # ('/50jobs_5machines.txt', 5.28),
+                          # ('/50jobs_10machines.txt', 11.62),
+                          # ('/50jobs_20machines.txt', 14.15),
+                          # ('/100jobs_5machines.txt', 2.53),
+                          # ('/100jobs_10machines.txt', 6.35),
+                          # ('/100jobs_20machines.txt', 13.55),
+                          # ('/200jobs_10machines.txt', 4.03),
+                          # ('/200jobs_20machines.txt', 10.58),
+
+                          ('/500jobs_20machines.txt', 7)
                           ])
 def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
+    # all tests run about 10 + 500 + 525 + 1950 + 3955_ = _ sec
     frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
     assert len(frames) == 10
 
@@ -169,7 +173,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert my_round(average_percent_ratio) == expected_percent_ratio
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
@@ -200,15 +204,15 @@ def test_fgh_heuristic(file_name, expected_percent_ratio):
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert my_round(average_percent_ratio) == expected_percent_ratio
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
 # heuristics with local search ###############################################
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 5),
-                          ('/20jobs_10machines.txt', 8),
-                          ('/20jobs_20machines.txt', 8),
-                          ('/50jobs_5machines.txt', 3),
+                         [('/20jobs_5machines.txt', 4.77),
+                          ('/20jobs_10machines.txt', 8.43),
+                          ('/20jobs_20machines.txt', 7.63),
+                          ('/50jobs_5machines.txt', 2.55),
                           # too long time for regular testing
                           # ('/50jobs_10machines.txt', 8),
                           # ('/50jobs_20machines.txt', 11),
@@ -234,7 +238,7 @@ def test_palmer_heuristics_with_local_search(file_name,
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert my_round(average_percent_ratio) == expected_percent_ratio
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
@@ -265,7 +269,7 @@ def test_cds_heuristics_with_local_search(file_name, expected_percent_ratio):
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert my_round(average_percent_ratio) == expected_percent_ratio
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
@@ -296,7 +300,7 @@ def test_neh_heuristics_with_local_search(file_name, expected_percent_ratio):
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
     average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert my_round(average_percent_ratio) == expected_percent_ratio
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
 ###############################################################################
 
 
@@ -325,3 +329,5 @@ def test_difference():
     local_search(frame, liu_solution)
     print("liu solution: ", liu_solution, "\nliu end time: %s\n\n"
           % str(compute_end_time(frame, liu_solution)))
+
+# TODO to make a local search in a separate script
