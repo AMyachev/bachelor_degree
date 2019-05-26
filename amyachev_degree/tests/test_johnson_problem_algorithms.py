@@ -7,6 +7,49 @@ from amyachev_degree.simple_heuristics import (liu_reeves_heuristics,
 from amyachev_degree.exact_algorithm import johnson_algorithm
 
 
+def percentage_deviation(fst_heuristic: object, fst_args: dict,
+                         scnd_heuristic: object, scnd_args: dict,
+                         frames: list) -> float:
+    """
+    The calculations are performed with respect to the results
+    of the second heuristics.
+
+    Parameters
+    ----------
+    fst_heuristic: object
+        function callback
+    fst_args: dict
+        named arguments for `fst_heuristic`
+    scnd_heuristic: object
+        function callback
+    scnd_args: dict
+        named arguments for `scnd_heuristic`
+    frames: list
+        list of `JobSchedulingFrame` objects
+
+    Returns
+    -------
+    average_deviation: float
+
+    Notes
+    -----
+    Averaging occurs by the count of frames.
+
+    """
+    solutions_ratio = 0.
+    for frame in frames:
+        fst_solution = fst_heuristic(frame, **fst_args)
+        fst_end_time = compute_end_time(frame, fst_solution)
+
+        scnd_solution = scnd_heuristic(frame)
+        scnd_end_time = compute_end_time(frame, scnd_solution)
+
+        end_time_diff = fst_end_time - scnd_end_time
+        solutions_ratio += end_time_diff / scnd_end_time
+
+    return solutions_ratio / len(frames) * 100
+
+
 def _percentage_deviation_johnson_problem(count_jobs: int, time_seed: int,
                                           count_problem: int,
                                           heuristic: object, **kwargs,
@@ -42,18 +85,8 @@ def _percentage_deviation_johnson_problem(count_jobs: int, time_seed: int,
         frames.append(flow_job_generator(count_jobs,
                                          count_machines, time_seed + i))
 
-    solutions_ratio = []
-    for i in range(10):
-        solution = heuristic(frames[i], **kwargs)
-        schedule_end_time = compute_end_time(frames[i], solution)
-
-        johnson_solution = johnson_algorithm(frames[i])
-        best_end_time = compute_end_time(frames[i], johnson_solution)
-
-        end_time_diff = schedule_end_time - best_end_time
-        solutions_ratio.append(end_time_diff / best_end_time)
-
-    return sum(solutions_ratio) / len(solutions_ratio) * 100
+    return percentage_deviation(heuristic, kwargs,
+                                johnson_algorithm, {}, frames)
 
 
 @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
