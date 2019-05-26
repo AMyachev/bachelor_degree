@@ -58,7 +58,7 @@ def percentage_deviation(fst_heuristic: object, fst_args: dict,
         fst_solution = fst_heuristic(frame, **fst_args)
         fst_end_time = compute_end_time(frame, fst_solution)
 
-        scnd_solution = scnd_heuristic(frame)
+        scnd_solution = scnd_heuristic(frame, **scnd_args)
         scnd_end_time = compute_end_time(frame, scnd_solution)
 
         end_time_diff = fst_end_time - scnd_end_time
