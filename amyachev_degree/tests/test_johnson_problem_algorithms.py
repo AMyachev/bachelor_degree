@@ -239,13 +239,13 @@ class TestJohnsonProblems:
 
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
-    # TODO fix expected_percent_ratio
+
     @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
-                             [(20, 873654221, 1.4),
-                              (50, 379008056, 0.53),
-                              (100, 1866992158, 0.26),
-                              (200, 216771124, 0.13),
-                              (500, 495070989, 0.05)
+                             [(20, 873654221, 1.22),
+                              (50, 379008056, 0.82),
+                              (100, 1866992158, 0.34),
+                              (200, 216771124, 0.23),
+                              (500, 495070989, 0.12)
                               ])
     def test_liu_reeves_heuristic_three_machines(self, count_jobs, time_seed,
                                                  expected_percent_ratio):
@@ -267,7 +267,7 @@ class TestJohnsonProblems:
             `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
              ::TestJohnsonProblems::test_liu_reeves_heuristic_three_machines`
 
-        All tests run about 1.52 sec.
+        All tests run about 10038 sec.
 
         """
         frames = self.generation_problems(
