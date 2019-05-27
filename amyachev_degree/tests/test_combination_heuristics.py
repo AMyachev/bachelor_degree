@@ -100,35 +100,56 @@ class TestSimpleHeuristicsWithLocalSearch:
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
-@pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 5),
-                          ('/20jobs_10machines.txt', 9),
-                          ('/20jobs_20machines.txt', 6),
-                          ('/50jobs_5machines.txt', 4),
-                          ('/50jobs_10machines.txt', 9),
-                          # too long time for regular testing
-                          # ('/50jobs_20machines.txt', 10),
-                          # ('/100jobs_5machines.txt', 3),
-                          # ('/100jobs_10machines.txt', 7),
-                          # ('/100jobs_20machines.txt', 9),
-                          # ('/200jobs_10machines.txt', 6),
-                          # ('/200jobs_20machines.txt', 9),
-                          # ('/500jobs_20machines.txt', 7)
-                          ])
-def test_cds_heuristics_with_local_search(file_name, expected_percent_ratio):
-    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
-    assert len(frames) == 10
+    @pytest.mark.parametrize('file_name, expected_percent_ratio',
+                             [('/20jobs_5machines.txt', 5.12),
+                              ('/20jobs_10machines.txt', 8.65),
+                              ('/20jobs_20machines.txt', 5.93),
+                              ('/50jobs_5machines.txt', 3.51),
+                              ('/50jobs_10machines.txt', 9.35),
+                              # too long time for regular testing
+                              # ('/50jobs_20machines.txt', 9.89),
+                              # ('/100jobs_5machines.txt', 2.91),
+                              # ('/100jobs_10machines.txt', 7.18),
+                              # ('/100jobs_20machines.txt', 8.93),
+                              # ('/200jobs_10machines.txt', 6.08),
+                              # ('/200jobs_20machines.txt', 9.11),
+                              # ('/500jobs_20machines.txt', 7.29)
+                              ])
+    def test_cds_heuristics_with_local_search(self, file_name,
+                                              expected_percent_ratio):
+        """
+        Function for research.
 
-    solutions_ratio = []
-    for i in range(10):
-        solution = cds_heuristics(frames[i])
-        local_search(frames[i], solution)
-        schedule_end_time = compute_end_time(frames[i], solution)
-        end_time_diff = schedule_end_time - frames[i].upper_bound
-        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
+        Problem
+        -------
+        Flow shop problem.
 
-    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert round(average_percent_ratio, 2) == expected_percent_ratio
+        Abstract
+        --------
+        The experiment consists in comparing the results of CDS heuristic
+        with local search improvements with the best results obtained by many
+        researchers for Taillard's Flow shop problems published on the website:
+        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+        Notes
+        -----
+        Starts as follows (from root folder):
+            `pytest amyachev_degree/tests/test_combination_heuristics.py\
+            ::TestSimpleHeuristicsWithLocalSearch\
+            ::test_cds_heuristics_with_local_search`
+
+        All tests run about 408 sec.
+
+        """
+        frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+        assert len(frames) == 10
+
+        heuristic = self.make_heuristic_with_local_search(cds_heuristics)
+
+        average_percent_ratio = percentage_deviation_using_upper_bound(
+            heuristic, {}, frames)
+
+        assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
