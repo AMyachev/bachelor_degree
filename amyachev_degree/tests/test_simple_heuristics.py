@@ -268,6 +268,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
     assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
+# TODO getting result
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
                          [#('/20jobs_5machines.txt', 1.75),
                           #('/20jobs_10machines.txt', 3.03),
