@@ -1,11 +1,11 @@
 import pytest
 
-from amyachev_degree.core import (flow_job_generator,
-                                  johnson_three_machines_generator)
-from amyachev_degree.simple_heuristics import (cds_heuristics,
-                                               liu_reeves_heuristics,
-                                               neh_heuristics,
-                                               palmer_heuristics)
+from amyachev_degree.core import (
+    flow_job_generator, johnson_three_machines_generator)
+
+from amyachev_degree.simple_heuristics import (
+    cds_heuristics, liu_reeves_heuristics, neh_heuristics, palmer_heuristics)
+
 from amyachev_degree.exact_algorithm import johnson_algorithm
 from amyachev_degree.util.testing import percentage_deviation
 
