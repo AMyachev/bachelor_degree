@@ -59,7 +59,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of palmer heuristic
-        with the exact solution found by Johnson's algorithm.
+        with the exact solution found by Johnson's algorithm for generated
+        problems.
 
         Notes
         -----
@@ -99,7 +100,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of NEH heuristic
-        with the exact solution found by Johnson's algorithm.
+        with the exact solution found by Johnson's algorithm for generated
+        problems.
 
         Notes
         -----
@@ -139,7 +141,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of LR(5) heuristic
-        with the exact solution found by Johnson's algorithm.
+        with the exact solution found by Johnson's algorithm for generated
+        problems.
 
         Notes
         -----
@@ -179,7 +182,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of palmer heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2).
+        with the exact solution found by CDS algorithm(sub_problem=2) for
+        generated problems.
 
         Notes
         -----
@@ -219,7 +223,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of NEH heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2).
+        with the exact solution found by CDS algorithm(sub_problem=2) for
+        generated problems.
 
         Notes
         -----
@@ -259,7 +264,8 @@ class TestJohnsonProblems:
         Abstract
         --------
         The experiment consists in comparing the results of LR(5) heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2).
+        with the exact solution found by CDS algorithm(sub_problem=2) for
+        generated problems.
 
         Notes
         -----

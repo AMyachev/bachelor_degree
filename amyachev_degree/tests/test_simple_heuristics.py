@@ -29,36 +29,6 @@ def test_slope_index(idx_job, slope_index):
     assert slope_index == slope_index_func(frame, idx_job)
 
 
-@pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [('/20jobs_5machines.txt', 10.81),
-                          ('/20jobs_10machines.txt', 15.27),
-                          ('/20jobs_20machines.txt', 16.34),
-                          ('/50jobs_5machines.txt', 5.34),
-                          ('/50jobs_10machines.txt', 13.49),
-                          ('/50jobs_20machines.txt', 15.46),
-                          ('/100jobs_5machines.txt', 2.33),
-                          ('/100jobs_10machines.txt', 9.09),
-                          # too long time for regular testing
-                          # ('/100jobs_20machines.txt', 13.44),
-                          # ('/200jobs_10machines.txt', 5.02),
-                          # ('/200jobs_20machines.txt', 12.16),
-                          # ('/500jobs_20machines.txt', 6.76)
-                          ])
-def test_palmer_heuristics(file_name, expected_percent_ratio):
-    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
-    assert len(frames) == 10
-
-    solutions_ratio = []
-    for i in range(10):
-        solution = palmer_heuristics(frames[i])
-        schedule_end_time = compute_end_time(frames[i], solution)
-        end_time_diff = schedule_end_time - frames[i].upper_bound
-        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
-
-    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
-    assert round(average_percent_ratio, 2) == expected_percent_ratio
-
-
 def test_cds_create_proc_times():
     processing_times = [[17, 19, 13], [15, 11, 12],
                         [14, 21, 16], [20, 16, 20], [16, 17, 17]]
@@ -82,6 +52,60 @@ def test_cds_create_proc_times():
 
 
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
+                         [('/20jobs_5machines.txt', 10.81),
+                          ('/20jobs_10machines.txt', 15.27),
+                          ('/20jobs_20machines.txt', 16.34),
+                          ('/50jobs_5machines.txt', 5.34),
+                          ('/50jobs_10machines.txt', 13.49),
+                          ('/50jobs_20machines.txt', 15.46),
+                          ('/100jobs_5machines.txt', 2.33),
+                          ('/100jobs_10machines.txt', 9.09),
+                          # too long time for regular testing
+                          # ('/100jobs_20machines.txt', 13.44),
+                          # ('/200jobs_10machines.txt', 5.02),
+                          # ('/200jobs_20machines.txt', 12.16),
+                          # ('/500jobs_20machines.txt', 6.76)
+                          ])
+def test_palmer_heuristics(file_name, expected_percent_ratio):
+    """
+    Function for research.
+
+    Problem
+    -------
+    Flow shop problem.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of Palmer's heuristic
+    with the best results obtained by many researchers for Taillard's Flow shop
+    problems published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_simple_heuristics.py\
+            ::test_palmer_heuristics`
+
+    All tests run about 1.58 sec.
+
+    """
+    frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+    assert len(frames) == 10
+
+    solutions_ratio = []
+    for i in range(10):
+        solution = palmer_heuristics(frames[i])
+        schedule_end_time = compute_end_time(frames[i], solution)
+
+        end_time_diff = schedule_end_time - frames[i].upper_bound
+        solutions_ratio.append(end_time_diff / frames[i].upper_bound)
+
+    average_percent_ratio = sum(solutions_ratio) / len(solutions_ratio) * 100
+    assert round(average_percent_ratio, 2) == expected_percent_ratio
+
+
+@pytest.mark.parametrize('file_name, expected_percent_ratio',
                          [('/20jobs_5machines.txt', 9.55),
                           ('/20jobs_10machines.txt', 12.12),
                           ('/20jobs_20machines.txt', 9.72),
@@ -97,6 +121,29 @@ def test_cds_create_proc_times():
                           # ('/500jobs_20machines.txt', 8.20)
                           ])
 def test_cds_heuristics(file_name, expected_percent_ratio):
+    """
+    Function for research.
+
+    Problem
+    -------
+    Flow shop problem.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of CDS heuristic
+    with the best results obtained by many researchers for Taillard's Flow shop
+    problems published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_simple_heuristics.py\
+            ::test_cds_heuristics`
+
+    All tests run about 5.24 sec.
+
+    """
     frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
     assert len(frames) == 10
 
@@ -104,6 +151,7 @@ def test_cds_heuristics(file_name, expected_percent_ratio):
     for i in range(10):
         solution = cds_heuristics(frames[i])
         schedule_end_time = compute_end_time(frames[i], solution)
+
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
@@ -127,7 +175,29 @@ def test_cds_heuristics(file_name, expected_percent_ratio):
                           # ('/500jobs_20machines.txt', 1.73)
                           ])
 def test_neh_heuristics(file_name, expected_percent_ratio):
-    # all tests run about 5154 sec
+    """
+    Function for research.
+
+    Problem
+    -------
+    Flow shop problem.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of NEH heuristic
+    with the best results obtained by many researchers for Taillard's Flow shop
+    problems published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_simple_heuristics.py\
+            ::test_neh_heuristics`
+
+    All tests run about 5154 sec.
+
+    """
     frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
     assert len(frames) == 10
 
@@ -135,6 +205,7 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
     for i in range(10):
         solution = neh_heuristics(frames[i])
         schedule_end_time = compute_end_time(frames[i], solution)
+
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
@@ -142,13 +213,11 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
     assert round(average_percent_ratio, 2) == expected_percent_ratio
 
 
-# TODO fix expected_percent_ratio
 @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                         [#('/20jobs_5machines.txt', 7.96),
-                          #('/20jobs_10machines.txt', 11.99),
+                         [('/20jobs_5machines.txt', 7.96),
+                          ('/20jobs_10machines.txt', 11.99),
                           # too long time for regular testing
                           # ('/20jobs_20machines.txt', 13.36),
-
                           # ('/50jobs_5machines.txt', 5.28),
                           # ('/50jobs_10machines.txt', 11.62),
                           # ('/50jobs_20machines.txt', 14.15),
@@ -158,10 +227,33 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
                           # ('/200jobs_10machines.txt', 4.03),
                           # ('/200jobs_20machines.txt', 10.58),
 
-                          ('/500jobs_20machines.txt', 7)
+                          # TODO fix expected_percent_ratio
+                          # ('/500jobs_20machines.txt', 7)
                           ])
 def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
-    # all tests run about 10 + 500 + 525 + 1950 + 3955_ = _ sec
+    """
+    Function for research.
+
+    Problem
+    -------
+    Flow shop problem.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of LR(5) heuristic
+    with the best results obtained by many researchers for Taillard's Flow shop
+    problems published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_simple_heuristics.py\
+            ::test_liu_reeves_heuristics`
+
+    All tests run > 40000 sec. (problem: 500x20 run > 36000 sec)
+
+    """
     frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
     assert len(frames) == 10
 
@@ -169,6 +261,7 @@ def test_liu_reeves_heuristics(file_name, expected_percent_ratio):
     for i in range(10):
         solution = liu_reeves_heuristics(frames[i], 5)
         schedule_end_time = compute_end_time(frames[i], solution)
+
         end_time_diff = schedule_end_time - frames[i].upper_bound
         solutions_ratio.append(end_time_diff / frames[i].upper_bound)
 
