@@ -184,7 +184,7 @@ def neh_heuristics(frame: JobSchedulingFrame) -> list:
     init_jobs = [j for j in range(count_jobs)]
     init_jobs.sort(key=lambda x: all_processing_times[x], reverse=True)
 
-    solution = local_search_partitial_sequence(frame, init_jobs)
+    solution, _ = local_search_partitial_sequence(frame, init_jobs)
     return solution
 
 
@@ -321,7 +321,7 @@ def fgh_heuristic(frame: JobSchedulingFrame, count_alpha: int = 1) -> list:
         solutions.append(copy(init_jobs))
 
     for i in range(count_alpha):
-        solutions[i] = local_search_partitial_sequence(frame, solutions[i])
+        solutions[i], _ = local_search_partitial_sequence(frame, solutions[i])
 
     solutions.sort(key=lambda solution: compute_end_time(frame, solution))
     return solutions[0]

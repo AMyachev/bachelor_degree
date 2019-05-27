@@ -1,3 +1,4 @@
+import copy
 from amyachev_degree.core import JobSchedulingFrame, compute_end_time
 
 
@@ -17,36 +18,36 @@ def local_search(frame: JobSchedulingFrame, init_jobs: list) -> list:
 
     Returns
     -------
-    result of local search: bool
-        if the `init_jobs` is changed , returns True.
+    result of local search: list, bool
+        if would be found a solution better than `init_jobs`, returns True.
 
     Notes
     -----
-    Modifies the original job sequence
+    don't modificate `init_jobs`
 
     """
-    changed_init_jobs = False
+    solution = copy.copy(init_jobs)
+    different_from_init_jobs = False
 
-    # hack for start the loop
-    improvement = True
-
-    while improvement:
+    while True:
         improvement = False
-        for idx in range(len(init_jobs) - 1):
-            best_flowshop_time = compute_end_time(frame, init_jobs)
+        for idx in range(len(solution) - 1):
+            best_flowshop_time = compute_end_time(frame, solution)
+            swap(solution, idx, idx + 1)
+            new_flowshop_time = compute_end_time(frame, solution)
 
-            swap(init_jobs, idx, idx + 1)
-
-            new_flowshop_time = compute_end_time(frame, init_jobs)
             if best_flowshop_time > new_flowshop_time:
                 best_flowshop_time = new_flowshop_time
                 improvement = True
-                changed_init_jobs = True
+                different_from_init_jobs = True
             else:
                 # reverse swap
-                swap(init_jobs, idx, idx + 1)
+                swap(solution, idx, idx + 1)
 
-    return changed_init_jobs
+        if not improvement:
+            break
+
+    return solution, different_from_init_jobs
 
 
 def local_search_partitial_sequence(frame: JobSchedulingFrame,
@@ -64,7 +65,8 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
 
     Returns
     -------
-    result of local search: list
+    result of local search: list, bool
+        if would be found a solution better than `init_jobs`, returns True.
 
     Notes
     -----
@@ -72,9 +74,10 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
 
     """
     solution = [init_jobs[0]]  # using job, which have max processing time
+    different_from_init_jobs = False
 
-    # the number is obviously greater than the minimum end time
-    time_compare = compute_end_time(frame, init_jobs) + 1
+    # init end time
+    time_compare = compute_end_time(frame, init_jobs)
 
     # local search
     for position_job, idx_job in enumerate(init_jobs[1:], 1):
@@ -86,8 +89,9 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
             if min_end_time > end_time:
                 min_end_time = end_time
                 best_insert_place = insert_place
+                different_from_init_jobs = True
 
             solution.pop(insert_place)
         solution.insert(best_insert_place, idx_job)
 
-    return solution
+    return solution, different_from_init_jobs
