@@ -55,9 +55,9 @@ class TestSimpleHeuristicsWithLocalSearch:
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
                              [('/20jobs_5machines.txt', 4.77),
                               ('/20jobs_10machines.txt', 8.43),
-                              ('/20jobs_20machines.txt', 7.63),
-                              ('/50jobs_5machines.txt', 2.55),
                               # too long time for regular testing
+                              # ('/20jobs_20machines.txt', 7.63),
+                              # ('/50jobs_5machines.txt', 2.55),
                               # ('/50jobs_10machines.txt', 8.31),
                               # ('/50jobs_20machines.txt', 11.14),
                               # ('/100jobs_5machines.txt', 1.38),
@@ -90,6 +90,7 @@ class TestSimpleHeuristicsWithLocalSearch:
             ::TestSimpleHeuristicsWithLocalSearch\
             ::test_palmer_heuristics_with_local_search`
 
+        First 9 tests run about 25 sec.
         All tests run about 526 sec.
 
         """
@@ -107,9 +108,10 @@ class TestSimpleHeuristicsWithLocalSearch:
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
                              [('/20jobs_5machines.txt', 5.12),
                               ('/20jobs_10machines.txt', 8.65),
-                              ('/20jobs_20machines.txt', 5.93),
-                              ('/50jobs_5machines.txt', 3.51),
-                              ('/50jobs_10machines.txt', 9.35),
+                              # too long time for regular testing
+                              # ('/20jobs_20machines.txt', 5.93),
+                              # ('/50jobs_5machines.txt', 3.51),
+                              # ('/50jobs_10machines.txt', 9.35),
                               # too long time for regular testing
                               # ('/50jobs_20machines.txt', 9.89),
                               # ('/100jobs_5machines.txt', 2.91),
@@ -142,6 +144,7 @@ class TestSimpleHeuristicsWithLocalSearch:
             ::TestSimpleHeuristicsWithLocalSearch\
             ::test_cds_heuristics_with_local_search`
 
+        First 9 tests run about 28 sec.
         All tests run about 408 sec.
 
         """
@@ -194,6 +197,7 @@ class TestSimpleHeuristicsWithLocalSearch:
             ::TestSimpleHeuristicsWithLocalSearch\
             ::test_neh_heuristics_with_local_search`
 
+        First 9 tests run about 85 sec.
         All tests run about 5175 sec.
 
         """
