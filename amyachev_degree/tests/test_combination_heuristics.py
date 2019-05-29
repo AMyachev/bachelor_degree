@@ -211,21 +211,20 @@ class TestSimpleHeuristicsWithLocalSearch:
 
 class TestSimpleHeuristicsWithCombinationLocalSearches:
 
-    # TODO getting result
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                             [#('/20jobs_5machines.txt', 4.37),
-                              #('/20jobs_10machines.txt', 5.83),
+                             [('/20jobs_5machines.txt', 4.37),
+                              ('/20jobs_10machines.txt', 5.83),
+                              # too long time for regular testing
                               # ('/20jobs_20machines.txt', 3.88),
-                              # ('/50jobs_5machines.txt', 3.58),
-                              # ('/50jobs_10machines.txt', 7.19),
+                              # ('/50jobs_5machines.txt', 3.61),
+                              # ('/50jobs_10machines.txt', 6.86),
                               # ('/50jobs_20machines.txt', 7.20),
                               # ('/100jobs_5machines.txt', 1.3),
                               # ('/100jobs_10machines.txt', 3.79),
-                              # too long time for regular testing
-                              ('/100jobs_20machines.txt', 13.44),
-                              ('/200jobs_10machines.txt', 5.02),
-                              ('/200jobs_20machines.txt', 12.16),
-                              ('/500jobs_20machines.txt', 6.76)
+                              # ('/100jobs_20machines.txt', 5.54),
+                              # ('/200jobs_10machines.txt', _),
+                              # ('/200jobs_20machines.txt', _),
+                              # ('/500jobs_20machines.txt', _)
                               ])
     def test_palmer_heuristic(self, file_name, expected_percent_ratio):
         """
@@ -250,7 +249,8 @@ class TestSimpleHeuristicsWithCombinationLocalSearches:
             ::TestSimpleHeuristicsWithCombinationLocalSearches\
             ::test_palmer_heuristic`
 
-        All tests run about 302 + _ sec.
+        First 9 tests run about 1527 sec.
+        All tests run about _ sec.
 
         """
         frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
@@ -264,21 +264,20 @@ class TestSimpleHeuristicsWithCombinationLocalSearches:
 
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
-    # TODO getting result
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                             [#('/20jobs_5machines.txt', 4.52),
-                              #('/20jobs_10machines.txt', 4.85),
+                             [('/20jobs_5machines.txt', 4.52),
+                              ('/20jobs_10machines.txt', 4.85),
+                              # too long time for regular testing
                               # ('/20jobs_20machines.txt', 4.88),
                               # ('/50jobs_5machines.txt', 3.36),
                               # ('/50jobs_10machines.txt', 5.85),
                               # ('/50jobs_20machines.txt', 7.30),
                               # ('/100jobs_5machines.txt', 1.40),
                               # ('/100jobs_10machines.txt', 3.65),
-                              # too long time for regular testing
-                              ('/100jobs_20machines.txt', 13.44),
-                              ('/200jobs_10machines.txt', 5.02),
-                              ('/200jobs_20machines.txt', 12.16),
-                              ('/500jobs_20machines.txt', 6.76)
+                              # ('/100jobs_20machines.txt', 5.29),
+                              # ('/200jobs_10machines.txt', _),
+                              # ('/200jobs_20machines.txt', _),
+                              # ('/500jobs_20machines.txt', _)
                               ])
     def test_cds_heuristic(self, file_name, expected_percent_ratio):
         """
@@ -303,7 +302,8 @@ class TestSimpleHeuristicsWithCombinationLocalSearches:
             ::TestSimpleHeuristicsWithCombinationLocalSearches\
             ::test_cds_heuristic`
 
-        All tests run about 322 + _ sec.
+        First 9 tests run about 1225 sec.
+        All tests run about _ sec.
 
         """
         frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
