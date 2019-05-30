@@ -33,6 +33,7 @@ def combination_local_searches(frame: JobSchedulingFrame,
     return solution, different_from_init_jobs
 
 
+# TODO make doc-string
 def make_heuristic_with_local_search(heuristic: object,
                                      func_search: object) -> object:
 
@@ -206,6 +207,168 @@ class TestSimpleHeuristicsWithLocalSearch:
 
         heuristic = make_heuristic_with_local_search(neh_heuristics,
                                                      local_search)
+
+        average_percent_ratio = percentage_deviation_using_upper_bound(
+            heuristic, {}, frames)
+
+        assert round(average_percent_ratio, 2) == expected_percent_ratio
+
+
+class TestHeuristicsWithLocalSearchPartitialSequence:
+
+    @pytest.mark.parametrize('file_name, expected_percent_ratio',
+                             [('/20jobs_5machines.txt', 6.08),
+                              ('/20jobs_10machines.txt', 7.14),
+                              # too long time for regular testing
+                              # ('/20jobs_20machines.txt', 4.91),
+                              # ('/50jobs_5machines.txt', 7.72),
+                              # ('/50jobs_10machines.txt', 8.24),
+                              # ('/50jobs_20machines.txt', 8.35),
+                              # ('/100jobs_5machines.txt', 11.82),
+                              # ('/100jobs_10machines.txt', 7.11),
+                              # ('/100jobs_20machines.txt', 7.2),
+                              # ('/200jobs_10machines.txt', 3.36),
+                              # ('/200jobs_20machines.txt', 9.18),
+                              # ('/500jobs_20machines.txt', 5.56)
+                              ])
+    def test_palmer_heuristic(self, file_name, expected_percent_ratio):
+        """
+        Function for research.
+
+        Problem
+        -------
+        Flow shop problem.
+
+        Abstract
+        --------
+        The experiment consists in comparing the results of Palmer's heuristic
+        with local search using partitial sequence improvements with the best
+        results obtained by many researchers for Taillard's Flow shop problems
+        published on the website:
+        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+        Notes
+        -----
+        Starts as follows (from root folder):
+            `pytest amyachev_degree/tests/test_combination_heuristics.py\
+            ::TestHeuristicsWithLocalSearchPartitialSequence\
+            ::test_palmer_heuristic`
+
+        First 9 tests run about 78 sec.
+        All tests run about _ sec.
+
+        """
+        frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+        assert len(frames) == 10
+
+        heuristic = make_heuristic_with_local_search(
+            palmer_heuristics, local_search_partitial_sequence)
+
+        average_percent_ratio = percentage_deviation_using_upper_bound(
+            heuristic, {}, frames)
+
+        assert round(average_percent_ratio, 2) == expected_percent_ratio
+
+    @pytest.mark.parametrize('file_name, expected_percent_ratio',
+                             [('/20jobs_5machines.txt', 6.76),
+                              ('/20jobs_10machines.txt', 6.53),
+                              # too long time for regular testing
+                              # ('/20jobs_20machines.txt', 4.52),
+                              # ('/50jobs_5machines.txt', 6.74),
+                              # ('/50jobs_10machines.txt', 7.02),
+                              # ('/50jobs_20machines.txt', 8.04),
+                              # ('/100jobs_5machines.txt', 5.12),
+                              # ('/100jobs_10machines.txt', 5.95),
+                              # ('/100jobs_20machines.txt', 6.24),
+                              # ('/200jobs_10machines.txt', 3.36),
+                              # ('/200jobs_20machines.txt', 9.18),
+                              # ('/500jobs_20machines.txt', 5.56)
+                              ])
+    def test_cds_heuristic(self, file_name, expected_percent_ratio):
+        """
+        Function for research.
+
+        Problem
+        -------
+        Flow shop problem.
+
+        Abstract
+        --------
+        The experiment consists in comparing the results of CDS heuristic
+        with local search using partitial sequence improvements with the best
+        results obtained by many researchers for Taillard's Flow shop problems
+        published on the website:
+        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+        Notes
+        -----
+        Starts as follows (from root folder):
+            `pytest amyachev_degree/tests/test_combination_heuristics.py\
+            ::TestHeuristicsWithLocalSearchPartitialSequence\
+            ::test_cds_heuristic`
+
+        First 9 tests run about 75 sec.
+        All tests run about _ sec.
+
+        """
+        frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+        assert len(frames) == 10
+
+        heuristic = make_heuristic_with_local_search(
+            cds_heuristics, local_search_partitial_sequence)
+
+        average_percent_ratio = percentage_deviation_using_upper_bound(
+            heuristic, {}, frames)
+
+        assert round(average_percent_ratio, 2) == expected_percent_ratio
+
+    @pytest.mark.parametrize('file_name, expected_percent_ratio',
+                             [('/20jobs_5machines.txt', 4.69),
+                              ('/20jobs_10machines.txt', 9.62),
+                              # too long time for regular testing
+                              # ('/20jobs_20machines.txt', 7.52),
+                              # ('/50jobs_5machines.txt', 4.64),
+                              # ('/50jobs_10machines.txt', 9.61),
+                              # ('/50jobs_20machines.txt', 8.57),
+                              # ('/100jobs_5machines.txt', 3.87),
+                              # ('/100jobs_10machines.txt', 6.01),
+                              # ('/100jobs_20machines.txt', 6.71),
+                              # ('/200jobs_10machines.txt', 3.36),
+                              # ('/200jobs_20machines.txt', 9.18),
+                              # ('/500jobs_20machines.txt', 5.56)
+                              ])
+    def test_neh_heuristic(self, file_name, expected_percent_ratio):
+        """
+        Function for research.
+
+        Problem
+        -------
+        Flow shop problem.
+
+        Abstract
+        --------
+        The experiment consists in comparing the results of NEH heuristic
+        with local search using partitial sequence improvements with the best
+        results obtained by many researchers for Taillard's Flow shop problems
+        published on the website:
+        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+        Notes
+        -----
+        Starts as follows (from root folder):
+            `pytest amyachev_degree/tests/test_combination_heuristics.py\
+            ::TestHeuristicsWithLocalSearchPartitialSequence\
+            ::test_neh_heuristic`
+
+        First 9 tests run about 151 sec.
+        All tests run about _ sec.
+
+        """
+        frames = read_flow_shop_instances(FLOW_SHOP_INSTANCE_DIR + file_name)
+        assert len(frames) == 10
+
+        heuristic = make_heuristic_with_local_search(
+            neh_heuristics, local_search_partitial_sequence)
 
         average_percent_ratio = percentage_deviation_using_upper_bound(
             heuristic, {}, frames)
