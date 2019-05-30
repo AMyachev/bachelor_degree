@@ -215,6 +215,28 @@ class TestSimpleHeuristicsWithLocalSearch:
 
 
 class TestHeuristicsWithLocalSearchPartitialSequence:
+    """
+    Class for research.
+
+    Problem
+    -------
+    Flow shop.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of heuristics with local
+    search using partitial sequence improvements with the best results obtained
+    by many researchers for Taillard's Flow shop problems
+    published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_combination_heuristics.py\
+        ::TestHeuristicsWithLocalSearchPartitialSequence`
+
+    """
 
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
                              [('/20jobs_5machines.txt', 6.08),
@@ -233,27 +255,8 @@ class TestHeuristicsWithLocalSearchPartitialSequence:
                               ])
     def test_palmer_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of Palmer's heuristic
-        with local search using partitial sequence improvements with the best
-        results obtained by many researchers for Taillard's Flow shop problems
-        published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestHeuristicsWithLocalSearchPartitialSequence\
-            ::test_palmer_heuristic`
-
         First 9 tests run about 78 sec.
         All tests run about _ sec.
 
@@ -286,27 +289,8 @@ class TestHeuristicsWithLocalSearchPartitialSequence:
                               ])
     def test_cds_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of CDS heuristic
-        with local search using partitial sequence improvements with the best
-        results obtained by many researchers for Taillard's Flow shop problems
-        published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestHeuristicsWithLocalSearchPartitialSequence\
-            ::test_cds_heuristic`
-
         First 9 tests run about 75 sec.
         All tests run about _ sec.
 
@@ -339,27 +323,8 @@ class TestHeuristicsWithLocalSearchPartitialSequence:
                               ])
     def test_neh_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of NEH heuristic
-        with local search using partitial sequence improvements with the best
-        results obtained by many researchers for Taillard's Flow shop problems
-        published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestHeuristicsWithLocalSearchPartitialSequence\
-            ::test_neh_heuristic`
-
         First 9 tests run about 151 sec.
         All tests run about _ sec.
 
