@@ -51,7 +51,28 @@ def make_heuristic_with_local_search(heuristic: object,
     return heuristic_with_local_search
 
 
-class TestSimpleHeuristicsWithLocalSearch:
+class TestHeuristicsWithLocalSearch:
+    """
+    Class for research.
+
+    Problem
+    -------
+    Flow shop.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of Palmer's heuristic
+    with local search improvements with the best results obtained by many
+    researchers for Taillard's Flow shop problems published on the website:
+    http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_combination_heuristics.py\
+        ::TestHeuristicsWithLocalSearch`
+
+    """
 
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
                              [('/20jobs_5machines.txt', 4.77),
@@ -68,29 +89,10 @@ class TestSimpleHeuristicsWithLocalSearch:
                               # ('/200jobs_20machines.txt', 9.18),
                               # ('/500jobs_20machines.txt', 5.56)
                               ])
-    def test_palmer_heuristics_with_local_search(self, file_name,
-                                                 expected_percent_ratio):
+    def test_palmer_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of Palmer's heuristic
-        with local search improvements with the best results obtained by many
-        researchers for Taillard's Flow shop problems published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestSimpleHeuristicsWithLocalSearch\
-            ::test_palmer_heuristics_with_local_search`
-
         First 9 tests run about 25 sec.
         All tests run about 526 sec.
 
@@ -122,29 +124,10 @@ class TestSimpleHeuristicsWithLocalSearch:
                               # ('/200jobs_20machines.txt', 9.11),
                               # ('/500jobs_20machines.txt', 7.29)
                               ])
-    def test_cds_heuristics_with_local_search(self, file_name,
-                                              expected_percent_ratio):
+    def test_cds_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of CDS heuristic
-        with local search improvements with the best results obtained by many
-        researchers for Taillard's Flow shop problems published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestSimpleHeuristicsWithLocalSearch\
-            ::test_cds_heuristics_with_local_search`
-
         First 9 tests run about 28 sec.
         All tests run about 408 sec.
 
@@ -175,29 +158,10 @@ class TestSimpleHeuristicsWithLocalSearch:
                               # ('/200jobs_20machines.txt', 3.14),
                               # ('/500jobs_20machines.txt', 1.68)
                               ])
-    def test_neh_heuristics_with_local_search(self, file_name,
-                                              expected_percent_ratio):
+    def test_neh_heuristic(self, file_name, expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Flow shop problem.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of NEH heuristic
-        with local search improvements with the best results obtained by many
-        researchers for Taillard's Flow shop problems published on the website:
-        http://mistic.heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_combination_heuristics.py\
-            ::TestSimpleHeuristicsWithLocalSearch\
-            ::test_neh_heuristics_with_local_search`
-
         First 9 tests run about 85 sec.
         All tests run about 5175 sec.
 
