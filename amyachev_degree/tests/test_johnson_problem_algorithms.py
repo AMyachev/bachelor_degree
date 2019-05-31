@@ -10,7 +10,7 @@ from amyachev_degree.exact_algorithm import johnson_algorithm
 from amyachev_degree.util.testing import percentage_deviation
 
 
-class TestJohnsonProblems:
+class GeneratorInterface:
 
     def generation_problems(self, count_problem: int, generator: object,
                             **kwargs: dict) -> list:
@@ -40,6 +40,29 @@ class TestJohnsonProblems:
 
         return frames
 
+
+class TestJohnsonProblems(GeneratorInterface):
+    """
+    Class for research.
+
+    Problem
+    -------
+    Johnson's problem of two machines.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of heuristics
+    with the exact solution found by Johnson's algorithm for generated
+    problems.
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
+         ::TestJohnsonProblems`
+
+    """
+
     @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
                              [(20, 873654221, 0.56),
                               (50, 379008056, 0.23),
@@ -50,24 +73,8 @@ class TestJohnsonProblems:
     def test_palmer_heuristic(self, count_jobs, time_seed,
                               expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of two machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of palmer heuristic
-        with the exact solution found by Johnson's algorithm for generated
-        problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_palmer_heuristic`
-
         All tests run about 1.38 sec.
 
         """
@@ -91,24 +98,8 @@ class TestJohnsonProblems:
     def test_neh_heuristic(self, count_jobs, time_seed,
                            expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of two machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of NEH heuristic
-        with the exact solution found by Johnson's algorithm for generated
-        problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_neh_heuristic`
-
         All tests run about 600 sec.
 
         """
@@ -132,24 +123,8 @@ class TestJohnsonProblems:
     def test_liu_reeves_heuristic(self, count_jobs, time_seed,
                                   expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of two machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of LR(5) heuristic
-        with the exact solution found by Johnson's algorithm for generated
-        problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_liu_reeves_heuristic`
-
         All tests run about 6600 sec.
 
         """
@@ -163,6 +138,29 @@ class TestJohnsonProblems:
 
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
+
+class TestJohnsonProblemsThreeMachines(GeneratorInterface):
+    """
+    Class for research.
+
+    Problem
+    -------
+    Johnson's problem of three machines.
+
+    Abstract
+    --------
+    The experiment consists in comparing the results of heuristics
+    with the exact solution found by CDS algorithm(sub_problem=2) for
+    generated problems.
+
+    Notes
+    -----
+    Starts as follows (from root folder):
+        `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
+         ::TestJohnsonProblemsThreeMachines`
+
+    """
+
     @pytest.mark.parametrize('count_jobs, time_seed, expected_percent_ratio',
                              [(20, 873654221, 1.4),
                               (50, 379008056, 0.53),
@@ -173,24 +171,8 @@ class TestJohnsonProblems:
     def test_palmer_heuristic_three_machines(self, count_jobs, time_seed,
                                              expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of three machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of palmer heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2) for
-        generated problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_palmer_heuristic_three_machines`
-
         All tests run about 1.52 sec.
 
         """
@@ -214,24 +196,8 @@ class TestJohnsonProblems:
     def test_neh_heuristic_three_machines(self, count_jobs, time_seed,
                                           expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of three machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of NEH heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2) for
-        generated problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_neh_heuristic_three_machines`
-
         All tests run about 860 sec.
 
         """
@@ -255,24 +221,8 @@ class TestJohnsonProblems:
     def test_liu_reeves_heuristic_three_machines(self, count_jobs, time_seed,
                                                  expected_percent_ratio):
         """
-        Function for research.
-
-        Problem
+        Results
         -------
-        Johnson's problem of three machines.
-
-        Abstract
-        --------
-        The experiment consists in comparing the results of LR(5) heuristic
-        with the exact solution found by CDS algorithm(sub_problem=2) for
-        generated problems.
-
-        Notes
-        -----
-        Starts as follows (from root folder):
-            `pytest amyachev_degree/tests/test_johnson_problem_algorithms.py\
-             ::TestJohnsonProblems::test_liu_reeves_heuristic_three_machines`
-
         All tests run about 10038 sec.
 
         """
