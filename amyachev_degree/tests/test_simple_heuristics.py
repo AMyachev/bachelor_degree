@@ -86,6 +86,7 @@ def test_palmer_heuristics(file_name, expected_percent_ratio):
         `pytest amyachev_degree/tests/test_simple_heuristics.py\
             ::test_palmer_heuristics`
 
+    First 9 tests run about 1.25 sec.
     All tests run about 1.58 sec.
 
     """
@@ -140,6 +141,7 @@ def test_cds_heuristics(file_name, expected_percent_ratio):
         `pytest amyachev_degree/tests/test_simple_heuristics.py\
             ::test_cds_heuristics`
 
+    First 9 tests run about 2.15 sec.
     All tests run about 5.24 sec.
 
     """
@@ -194,6 +196,7 @@ def test_neh_heuristics(file_name, expected_percent_ratio):
         `pytest amyachev_degree/tests/test_simple_heuristics.py\
             ::test_neh_heuristics`
 
+    First 9 tests run about 78.5 sec.
     All tests run about 5154 sec.
 
     """
