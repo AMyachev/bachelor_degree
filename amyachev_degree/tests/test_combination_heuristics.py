@@ -24,7 +24,10 @@ def combination_local_searches(frame: JobSchedulingFrame,
     different_from_init_jobs = False
 
     while True:
-        solution, _ = local_search_partitial_sequence(frame, solution)
+        temp, better = local_search_partitial_sequence(frame, solution)
+        if better:
+            solution = temp
+
         solution, changed = local_search(frame, solution)
         if not changed:
             break
@@ -325,21 +328,21 @@ class TestHeuristicsWithCombinationLocalSearches:
     -----
     Starts as follows (from root folder):
         `pytest amyachev_degree/tests/test_combination_heuristics.py\
-        ::TestSimpleHeuristicsWithCombinationLocalSearches`
+        ::TestHeuristicsWithCombinationLocalSearches`
 
     """
 
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                             [('/20jobs_5machines.txt', 4.37),
-                              ('/20jobs_10machines.txt', 5.83),
+                             [('/20jobs_5machines.txt', 2.94),
+                              ('/20jobs_10machines.txt', 5.73),
                               # too long time for regular testing
-                              # ('/20jobs_20machines.txt', 3.88),
-                              # ('/50jobs_5machines.txt', 3.61),
-                              # ('/50jobs_10machines.txt', 6.86),
-                              # ('/50jobs_20machines.txt', 7.20),
-                              # ('/100jobs_5machines.txt', 1.3),
-                              # ('/100jobs_10machines.txt', 3.79),
-                              # ('/100jobs_20machines.txt', 5.54),
+                              # ('/20jobs_20machines.txt', 3.78),
+                              # ('/50jobs_5machines.txt', 2.02),
+                              # ('/50jobs_10machines.txt', 5.70),
+                              # ('/50jobs_20machines.txt', 6.43),
+                              # ('/100jobs_5machines.txt', 1.38),
+                              # ('/100jobs_10machines.txt', 3.07),
+                              # ('/100jobs_20machines.txt', 4.78),
                               # ('/200jobs_10machines.txt', _),
                               # ('/200jobs_20machines.txt', _),
                               # ('/500jobs_20machines.txt', _)
@@ -348,7 +351,7 @@ class TestHeuristicsWithCombinationLocalSearches:
         """
         Results
         -------
-        First 9 tests run about 1527 sec.
+        First 9 tests run about 230 sec.
         All tests run about _ sec.
 
         """
@@ -364,16 +367,16 @@ class TestHeuristicsWithCombinationLocalSearches:
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                             [('/20jobs_5machines.txt', 4.52),
-                              ('/20jobs_10machines.txt', 4.85),
+                             [('/20jobs_5machines.txt', 4.07),
+                              ('/20jobs_10machines.txt', 4.82),
                               # too long time for regular testing
-                              # ('/20jobs_20machines.txt', 4.88),
-                              # ('/50jobs_5machines.txt', 3.36),
-                              # ('/50jobs_10machines.txt', 5.85),
-                              # ('/50jobs_20machines.txt', 7.30),
-                              # ('/100jobs_5machines.txt', 1.40),
-                              # ('/100jobs_10machines.txt', 3.65),
-                              # ('/100jobs_20machines.txt', 5.29),
+                              # ('/20jobs_20machines.txt', 4.34),
+                              # ('/50jobs_5machines.txt', 2.80),
+                              # ('/50jobs_10machines.txt', 5.52),
+                              # ('/50jobs_20machines.txt', 6.28),
+                              # ('/100jobs_5machines.txt', 2.19),
+                              # ('/100jobs_10machines.txt', 3.95),
+                              # ('/100jobs_20machines.txt', 5.16),
                               # ('/200jobs_10machines.txt', _),
                               # ('/200jobs_20machines.txt', _),
                               # ('/500jobs_20machines.txt', _)
@@ -382,7 +385,7 @@ class TestHeuristicsWithCombinationLocalSearches:
         """
         Results
         -------
-        First 9 tests run about 1225 sec.
+        First 9 tests run about 190 sec.
         All tests run about _ sec.
 
         """
@@ -398,16 +401,16 @@ class TestHeuristicsWithCombinationLocalSearches:
         assert round(average_percent_ratio, 2) == expected_percent_ratio
 
     @pytest.mark.parametrize('file_name, expected_percent_ratio',
-                             [('/20jobs_5machines.txt', 3.27),
-                              ('/20jobs_10machines.txt', 4.85),
+                             [('/20jobs_5machines.txt', 2.46),
+                              ('/20jobs_10machines.txt', 4.29),
                               # too long time for regular testing
-                              # ('/20jobs_20machines.txt', 4.34),
-                              # ('/50jobs_5machines.txt', 1.91),
-                              # ('/50jobs_10machines.txt', 5.71),
-                              # ('/50jobs_20machines.txt', 6.48),
-                              # ('/100jobs_5machines.txt', 1.04),
-                              # ('/100jobs_10machines.txt', 3.53),
-                              # ('/100jobs_20machines.txt', 5.69),
+                              # ('/20jobs_20machines.txt', 3.52),
+                              # ('/50jobs_5machines.txt', 0.61),
+                              # ('/50jobs_10machines.txt', 4.20),
+                              # ('/50jobs_20machines.txt', 5.41),
+                              # ('/100jobs_5machines.txt', 0.47),
+                              # ('/100jobs_10machines.txt', 1.99),
+                              # ('/100jobs_20machines.txt', 3.88),
                               # ('/200jobs_10machines.txt', _),
                               # ('/200jobs_20machines.txt', _),
                               # ('/500jobs_20machines.txt', _)
@@ -416,7 +419,7 @@ class TestHeuristicsWithCombinationLocalSearches:
         """
         Results
         -------
-        First 9 tests run about 1454 sec.
+        First 9 tests run about 222 sec.
         All tests run about _ sec.
 
         """

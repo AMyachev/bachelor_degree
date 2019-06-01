@@ -74,7 +74,7 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
 
     """
     solution = [init_jobs[0]]  # using job, which have max processing time
-    different_from_init_jobs = False
+    better_than_init_jobs = False
 
     # init end time
     time_compare = compute_end_time(frame, init_jobs)
@@ -89,9 +89,11 @@ def local_search_partitial_sequence(frame: JobSchedulingFrame,
             if min_end_time > end_time:
                 min_end_time = end_time
                 best_insert_place = insert_place
-                different_from_init_jobs = True
 
             solution.pop(insert_place)
         solution.insert(best_insert_place, idx_job)
 
-    return solution, different_from_init_jobs
+    solution_time = compute_end_time(frame, solution)
+    better_than_init_jobs = solution_time < time_compare
+
+    return solution, better_than_init_jobs
